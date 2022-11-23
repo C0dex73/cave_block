@@ -6,10 +6,11 @@
 import pygame
 import random
 import math
+from data.useJSON import useJSON
+from run.utils.execs import DataExecs
 
 class Menu:
-    def __init__(screen): #called at the beginning to initialize the menu displaying
-        bgPicture = pygame.image.load("medias/pictures/menu.png").convert() #import the background picture
-        bgPicture = pygame.transform.scale(bgPicture, (400, 400)) #rescale the background picture to the window size
-        
-        screen.blit(bgPicture, (0, 0)) #load the background picture at coordinates 0;0
+    def __init__(self, screen): #called at the beginning to initialize the menu displaying
+        self.Data = useJSON.Get("data/menu.json")
+        for component in self.Data["components"]: #load all the components of the MENU window
+            pass #TODO : implement execs n stuff here

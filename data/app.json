@@ -1,0 +1,11 @@
+{
+    "size" : [963, 720],
+    "title" : "Mineblock",
+    "backgroundColor" : [0, 0, 0],
+    "specialExec" : {
+        "Image" : [
+            "self.${name} = pygame.image.load(${path}).convert()",
+            "self.${name} = pygame.transform.scale(self.${name}, ${size})"
+        ]
+    }
+}

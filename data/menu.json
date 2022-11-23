@@ -1,0 +1,15 @@
+{
+  "components" : [
+    {
+        "name" : "exit_button",
+        "type" : "Tbutton",
+        "colors" : {
+            "light" : [255, 255, 255],
+            "dark" : [200, 200, 200]
+        },
+        "text" : "Exit",
+        "coordinates" : [63, 700],
+        "size" : [100, 30]
+    }
+  ]
+}
