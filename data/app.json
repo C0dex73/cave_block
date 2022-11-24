@@ -6,7 +6,7 @@
         "Image" : [
             "self.${name} = pygame.image.load(${path}).convert()",
             "self.${name} = pygame.transform.scale(self.${name}, ${size})",
-            "screen.blit(self.${name}, ${coordinates}"
+            "screen.blit(self.${name}, ${coordinates})"
         ],
         "Tbutton" : []
     }
