@@ -18,7 +18,7 @@
     {
       "name" : "backgroundImage",
       "type" : "Image",
-      "path" : "medias/images/menuBG.png",
+      "path" : "'medias/images/menuBG.png'",
       "coordinates" : [0, 0],
       "size" : [963, 720]
     }

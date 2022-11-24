@@ -15,4 +15,4 @@ class Menu:
         self.AppData = useJSON.Get("data/app.json")
         for component in self.Data["components"]: #load all the components of the MENU window
             for command in self.AppData["specialExec"][component["type"]]:
-                DataExecs.
+                exec(DataExecs.tranform(command, component))

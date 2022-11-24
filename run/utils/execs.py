@@ -1,7 +1,13 @@
 class DataExecs:
-    def tranform(str, Data):
+    def tranform(strCommand, Data):
+        strCommand = strCommand.replace("'", '"')
         start = 0
-        while "${" in str[start:len(str)+1]:
-            arg = str[str.find("${", start)+2:str.find("}", start)]
-            str[str.find("${", start):str.find("}", start)] = arg
-            start = str.find("}", start) + 1
+        command = ""
+        while "${" in strCommand[start:len(strCommand)+1]:
+            args = strCommand[strCommand.find("${", start)+2:strCommand.find("}", start)]
+            print(args)
+            command += strCommand[start:strCommand.find("${", start)] + str(Data[strCommand[strCommand.find("${", start)+2:strCommand.find("}", start)]])
+            start = strCommand.find("}", start+1)
+        print(strCommand[start])
+        command += strCommand[start:len(strCommand)+1]
+        return command
