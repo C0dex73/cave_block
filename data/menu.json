@@ -7,9 +7,20 @@
             "light" : [255, 255, 255],
             "dark" : [200, 200, 200]
         },
-        "text" : "Exit",
+        "text" : {
+          "content" : "Exit",
+          "font" : "Corbel",
+          "police" : 35
+        },
         "coordinates" : [63, 700],
         "size" : [100, 30]
+    },
+    {
+      "name" : "backgroundImage",
+      "type" : "Image",
+      "path" : "medias/images/menuBG.png",
+      "coordinates" : [0, 0],
+      "size" : [963, 720]
     }
   ]
 }
