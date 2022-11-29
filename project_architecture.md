@@ -1,7 +1,7 @@
 #CaveBlock
 
 Name : caveblock
-style : metroid, mario,...
+style : metroid, mario,... in a spaceraft (around the earth ?)
 
 MENU (first window):
     Background : ./caveBlock/pictures/menu.gif
