@@ -12,7 +12,7 @@ while running != 0: #main loop
         if event.type == pygame.QUIT: #if the user close the window
             running = 0 #stop the main loop
         
-        if running == -1:
+        if running == -1: #first time running
             screen = pygame.display.set_mode((400, 400)) #set the screen to 400 by 400 pixels
             pygame.display.set_caption("CaveBlock") #set the title of the window
             #TODO : add init stuff here
