@@ -2,5 +2,12 @@
     "screen" : {
         "size" : [1080, 720],
         "caption" : "CaveBlock"
+    },
+    "inputs" : {
+        "left" : "Q",
+        "right" : "D",
+        "shoot" : "E",
+        "jump" : "SPACE",
+        "crouch" : "LCTRL"
     }
 }
