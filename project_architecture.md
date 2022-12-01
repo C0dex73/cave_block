@@ -25,8 +25,20 @@ mainloop :
     classe courante = classe courante.next
 
 classe Menu:
-    def __init__():
+    def __init__(screen):
         def des variables
-        positionnement des variables
+        positionnement des objects
+-
     def tick(screen, input):
         si la souris est sur un Tbutton : l'éclaircir et si la souris clique, executer la fonction associée à ce Tbutton
+    
+
+classe Game:
+    def __init__(screen):
+        def des variables
+        positionnement des objects
+-
+    def tick():
+        bouger les entités (entities.json)
+        si collision retirer les points de vie associés
+        si tir : ajouter bullet
