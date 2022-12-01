@@ -16,7 +16,7 @@ def main():
             if state == -1: #first time state
                 screen = pygame.display.set_mode((400, 400)) #set the screen to 400 by 400 pixels
                 pygame.display.set_caption("CaveBlock") #set the title of the window
-                initMenu(screen)
+                Menu()
                 #TODO : add init stuff here
                 state = 1
             
@@ -26,6 +26,11 @@ def main():
             clock.tick(60) #set the clock rate to 60 fps
 
     pygame.quit() #stop the program
+
+class Menu: #to handle the menu display
+    def __init__(self, screen):
+        
+
 
 
 if __name__ == "__main__":
