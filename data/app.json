@@ -4,10 +4,10 @@
         "caption" : "CaveBlock"
     },
     "inputs" : {
-        "left" : "Q",
-        "right" : "D",
-        "shoot" : "E",
-        "jump" : "SPACE",
-        "crouch" : "LCTRL"
+        "left" : "q",
+        "right" : "d",
+        "shoot" : "e",
+        "jump" : "space",
+        "crouch" : "left ctrl"
     }
 }
