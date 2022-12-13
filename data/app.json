@@ -1,6 +1,6 @@
 {
     "screen" : {
-        "size" : [1080, 720],
+        "size" : [640, 320],
         "caption" : "CaveBlock"
     },
     "inputs" : {

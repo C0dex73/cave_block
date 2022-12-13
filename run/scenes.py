@@ -131,7 +131,7 @@ class Game:
         self.pygame = pygame
         self.Data = Data
         self.terrain = TerrainGen()
-        self.player = 
+        self.player = Player(screen)
         
     def tick(self, screen, events, keys):
         pass
