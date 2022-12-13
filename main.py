@@ -1,6 +1,4 @@
 import pygame
-import math
-import random
 import json
 from run import *
 

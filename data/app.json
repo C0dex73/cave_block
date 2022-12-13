@@ -1,13 +1,34 @@
 {
-    "screen" : {
-        "size" : [640, 320],
-        "caption" : "CaveBlock"
-    },
-    "inputs" : {
-        "left" : "q",
-        "right" : "d",
-        "shoot" : "e",
-        "jump" : "space",
-        "crouch" : "left ctrl"
-    }
+  "screen": {
+    "size": [
+      1280,
+      640
+    ],
+    "caption": "CaveBlock"
+  },
+  "inputs": {
+    "left": "q",
+    "right": "d",
+    "shoot": "e",
+    "jump": "space",
+    "crouch": "left ctrl"
+  },
+  "terrainDecoder": {
+    "0": [
+      "TECH_",
+      "SUPPORT_1",
+      "SUPPORT_2",
+      "SUPPORT_3A",
+      "SUPPORT_4A",
+      "SUPPORT_5",
+      "SUPPORT_6",
+      "SUPPORT_7A",
+      "VENT_",
+      "CRATE_",
+      "CONSOLE_"
+    ],
+    "1": [
+      "CONCRETE_"
+    ]
+  }
 }

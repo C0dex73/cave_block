@@ -1,5 +1,13 @@
 import json
 import random
+import os
+
+def Rescaler(pos, axis):
+    Data = json.load(open("data/app.json", "r"))
+    actualResolution = Data["screen"]["size"]
+    betaResolution = [1080, 720]
+    
+    return round(actualResolution[axis] * pos / betaResolution[axis])
 
 def testKey(key, inputs, pygame):
     if inputs[pygame.key.key_code(key)]:
@@ -76,3 +84,9 @@ def TerrainGen(path=None):
         json.dump(terrain, open(path, 'w'))
     else:
         return terrain
+    
+def DrawTerrain(screen, CodedTerrain, Data, saveFilePath=None):
+    if saveFilePath is not None:
+        CodedTerrain = json.load(open(saveFilePath, 'r'))
+        
+    
