@@ -1,0 +1,13 @@
+{
+    "screen" : {
+        "size" : [1080, 720],
+        "caption" : "CaveBlock"
+    },
+    "inputs" : {
+        "left" : "q",
+        "right" : "d",
+        "shoot" : "e",
+        "jump" : "space",
+        "crouch" : "left ctrl"
+    }
+}
