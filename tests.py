@@ -1,3 +1,6 @@
-import pygame
+import random
+import json
 
-print(pygame.key.name(pygame.K_LCTRL))
+
+        
+TerrainGen(None)
