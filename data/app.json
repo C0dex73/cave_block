@@ -7,11 +7,12 @@
     "caption": "CaveBlock"
   },
   "inputs": {
-    "left": "q",
-    "right": "d",
-    "shoot": "e",
-    "jump": "space",
-    "crouch": "left ctrl"
+    "left": "LEFT",
+    "right": "RIGHT",
+    "shoot": "SPACE",
+    "jump": "UP",
+    "crouch": "DOWN",
+    "use" : "RCTRL"
   },
   "terrainDecoder": {
     "0": [

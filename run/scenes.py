@@ -85,7 +85,7 @@ class Options: #to handle the option menu display
         
         #right button 
         #indicator
-        if testKey(self.Data["inputs"]["right"], keys, pygame):
+        if keys[eval("pygame.K_" + self.Data["inputs"]["right"])]:
             pygame.draw.rect(screen, (0, 255, 0), pygame.Rect(Rescaler(600, 0),
                                                                         Rescaler(60, 1),
                                                                         Rescaler(25, 0),
@@ -104,7 +104,7 @@ class Options: #to handle the option menu display
             
         #left button
         # indicator
-        if testKey(self.Data["inputs"]["left"], keys, pygame):
+        if keys[eval("pygame.K_" + self.Data["inputs"]["left"])]:
             pygame.draw.rect(screen, (0, 255, 0), pygame.Rect(Rescaler(600, 0),
                                                                         Rescaler(135, 1), 
                                                                         Rescaler(25, 0),
@@ -122,7 +122,7 @@ class Options: #to handle the option menu display
             
         #jump button
         # indicator
-        if testKey(self.Data["inputs"]["jump"], keys, pygame):
+        if keys[eval("pygame.K_" + self.Data["inputs"]["jump"])]:
             pygame.draw.rect(screen, (0, 255, 0), pygame.Rect(Rescaler(600, 0),
                                                                         Rescaler(210, 1),
                                                                         Rescaler(25, 0),
@@ -140,7 +140,7 @@ class Options: #to handle the option menu display
             
         #crouch button
         # indicator
-        if testKey(self.Data["inputs"]["crouch"], keys, pygame):
+        if keys[eval("pygame.K_" + self.Data["inputs"]["crouch"])]:
             pygame.draw.rect(screen, (0, 255, 0), pygame.Rect(Rescaler(600, 0),
                                                                         Rescaler(285, 1),
                                                                         Rescaler(25, 0),
@@ -158,7 +158,7 @@ class Options: #to handle the option menu display
         
         #shoot button
         # indicator
-        if testKey(self.Data["inputs"]["shoot"], keys, pygame):
+        if keys[eval("pygame.K_" + self.Data["inputs"]["shoot"])]:
             pygame.draw.rect(screen, (0, 255, 0), pygame.Rect(Rescaler(600, 0),
                                                                         Rescaler(360, 1),
                                                                         Rescaler(25, 0),
@@ -173,6 +173,24 @@ class Options: #to handle the option menu display
         #text
         self.shootText = self.font2.render("Shoot (" + self.Data["inputs"]["shoot"] + ")", True, (225, 225, 225))
         screen.blit(self.shootText, (Rescaler(630, 0), Rescaler(360, 1)))
+        
+        #use button
+        # indicator
+        if keys[eval("pygame.K_" + self.Data["inputs"]["use"])]:
+            pygame.draw.rect(screen, (0, 255, 0), pygame.Rect(Rescaler(600, 0),
+                                                                        Rescaler(435, 1),
+                                                                        Rescaler(25, 0),
+                                                                        Rescaler(25 ,1)),
+                                                                        border_radius=2)
+        else:
+            pygame.draw.rect(screen, (255, 0, 0), pygame.Rect(Rescaler(600, 0),
+                                                                        Rescaler(435, 1),
+                                                                        Rescaler(25, 0),
+                                                                        Rescaler(25, 1)), 
+                                                                        border_radius=2)
+        #text
+        self.useText = self.font2.render("Use (" + self.Data["inputs"]["shoot"] + ")", True, (225, 225, 225))
+        screen.blit(self.useText, (Rescaler(630, 0), Rescaler(435, 1)))
 
 
 
@@ -182,7 +200,7 @@ class Game:
         self.terrain = TerrainGen()
         self.player = Player(screen)
         self.next = self
-        DrawTerrain(screen, self.terrain, self.Data)
+        self.terrain = DrawTerrain(screen, self.terrain, self.Data)
         
     def tick(self, screen, events, keys):
-        pass
+        screen.blit(self.terrain, (0, 0))

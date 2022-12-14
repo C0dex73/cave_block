@@ -9,11 +9,6 @@ def Rescaler(pos, axis):
     betaResolution = [1080, 720]
     
     return round(actualResolution[axis] * pos / betaResolution[axis])
-
-def testKey(key, inputs, pygame):
-    if inputs[pygame.key.key_code(key)]:
-        return True
-    return False
             
 def testEvent(Tevents, Revents):
     if len(Tevents) == 1: #if there is only one event to ckeck
@@ -87,6 +82,7 @@ def TerrainGen(path=None):
         return terrain
     
 def DrawTerrain(screen, CodedTerrain, Data, saveFilePath=None):
+    finalTerrainSurface = pygame.Surface(Data["screen"]["size"])
     if saveFilePath is not None:
         CodedTerrain = json.load(open(saveFilePath, 'r'))
         
@@ -102,4 +98,5 @@ def DrawTerrain(screen, CodedTerrain, Data, saveFilePath=None):
                         finalImageList.append(image)
             caseImage = pygame.image.load("textures/used/" + random.choice(finalImageList)).convert()
             caseImage = pygame.transform.scale(caseImage, (Data["screen"]["size"][0]/40, Data["screen"]["size"][1]/20))
-            screen.blit(caseImage, (case*Data["screen"]["size"][0]/40, line*Data["screen"]["size"][1]/20))
+            finalTerrainSurface.blit(caseImage, (case*Data["screen"]["size"][0]/40, line*Data["screen"]["size"][1]/20))
+    return finalTerrainSurface
