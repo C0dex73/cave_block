@@ -81,8 +81,8 @@ def TerrainGen(path=None):
     else:
         return terrain
     
-def DrawTerrain(screen, CodedTerrain, Data, saveFilePath=None):
-    finalTerrainSurface = pygame.Surface(Data["screen"]["size"])
+def DrawTerrain(screen, CodedTerrain, Data, saveFilePath=None): #TODO : implement the seed mechanism
+    finalTerrainSurface = pygame.Surface(Data["screen"]["size"]) #* this work tho
     if saveFilePath is not None:
         CodedTerrain = json.load(open(saveFilePath, 'r'))
         

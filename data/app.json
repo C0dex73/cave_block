@@ -12,7 +12,8 @@
     "shoot": "SPACE",
     "jump": "UP",
     "crouch": "DOWN",
-    "use" : "RCTRL"
+    "use" : "RCTRL",
+    "igMenu" : "ESCAPE"
   },
   "terrainDecoder": {
     "0": [

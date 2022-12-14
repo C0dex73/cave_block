@@ -201,6 +201,11 @@ class Game:
         self.player = Player(screen)
         self.next = self
         self.terrain = DrawTerrain(screen, self.terrain, self.Data)
+        self.inGameMenu = False
         
-    def tick(self, screen, events, keys):
-        screen.blit(self.terrain, (0, 0))
+    def tick(self, screen, events, keys): #! NOT TESTED, WAY NOT WORKING
+        if keys[eval("pygame.K_" + self.Data["inputs"]["igMenu"])] : self.inGameMenu #TODO : implement the igMenu
+        if self.inGameMenu:
+            pass
+        else:
+            screen.blit(self.terrain, (0, 0))
