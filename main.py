@@ -8,7 +8,7 @@ def main():
     state = 1 # state variable
     clock = pygame.time.Clock() #init the clock
 
-    scene = Menu(screen, pygame, Data) #set the first scene to the menu scene
+    scene = Menu(screen, Data) #set the first scene to the menu scene
     pygame.display.set_caption(Data["screen"]["caption"]) #set the title of the window
 
     while state != 0: #main loop

@@ -1,5 +1,6 @@
 import json
 import random
+import pygame
 import os
 
 def Rescaler(pos, axis):
@@ -89,4 +90,16 @@ def DrawTerrain(screen, CodedTerrain, Data, saveFilePath=None):
     if saveFilePath is not None:
         CodedTerrain = json.load(open(saveFilePath, 'r'))
         
+    Decoder = Data["terrainDecoder"]
     
+    for line in range(len(CodedTerrain)):
+        for case in range(len(CodedTerrain[line])):
+            imageList = os.listdir("textures/used")
+            finalImageList = []
+            for image in imageList:
+                for acceptedStr in Decoder[str(CodedTerrain[line][case])]:
+                    if image.__contains__(acceptedStr):
+                        finalImageList.append(image)
+            caseImage = pygame.image.load("textures/used/" + random.choice(finalImageList)).convert()
+            caseImage = pygame.transform.scale(caseImage, (Data["screen"]["size"][0]/40, Data["screen"]["size"][1]/20))
+            screen.blit(caseImage, (case*Data["screen"]["size"][0]/40, line*Data["screen"]["size"][1]/20))

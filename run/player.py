@@ -1,3 +1,3 @@
 class Player:
-    def __init__(self, screen, pygame):
+    def __init__(self, screen):
         pass
