@@ -22,16 +22,29 @@
     "1": [
       "CONCRETE_"
     ],
-    "2" : [
-      "FLOOR_1"
+    "2a" : [
+      "FLOOR_1",
+      "FLOOR_2A",
+      "FLOOR_2B",
+      "FLOOR_2D"
+    ],
+    "3a" : [
+      "FLOOR_3A",
+      "FLOOR_3B"
     ],
     "*" : [
       "CABLES_",
       "VINES_"
     ],
     "/" : [
-      "GRID_",
-      "j"
+      "j",
+      "asdf45"
+    ],
+    "//1" : [
+      ""
+    ],
+    "//2" : [
+      ""
     ]
   }
 }
