@@ -85,12 +85,18 @@ def TerrainGen():
                 for i in range(line - bit+1, line):
                     terrain[i][column] = "1"
                 
-            if terrain[line][column] == "0": #if its the background
+            if terrain[line][column].__contains__("0"): #if its the background
                 percent = random.randint(1, 100) #set percent as a variable wich will define the type of the block
                 if percent <= 5: #5% chance to be a neutral vent (no theme)
                     terrain[line][column] = "/"
                 elif percent <= 10: #5% chance to be a theme vent with the assocate background for transparent parts
                     terrain[line][column] = theme + "a;//" + theme
+                elif percent <= 45:
+                    terrain[line][column] = theme + "C"
+                elif percent <= 80:
+                    terrain[line][column] = theme
+                else:
+                    terrain[line][column] = theme + "C+"
         
     return terrain #return the generated terrain
     

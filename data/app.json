@@ -22,15 +22,33 @@
     "1": [
       "CONCRETE_"
     ],
+    "2" : [
+      "TECH_"
+    ],
     "2a" : [
       "FLOOR_1",
       "FLOOR_2A",
       "FLOOR_2B",
       "FLOOR_2D"
     ],
+    "2C" : [
+      "CRATE_1.1_"
+    ],
+    "2C+" : [
+      "CRATE_1.2_"
+    ],
+    "3" : [
+      "LAB_"
+    ],
     "3a" : [
       "FLOOR_3A",
       "FLOOR_3B"
+    ],
+    "3C" : [
+      "CRATE_2.1_"
+    ],
+    "3C+" : [
+      "CRATE_2.2_"
     ],
     "*" : [
       "CABLES_",
