@@ -1,13 +1,37 @@
 {
-    "screen" : {
-        "size" : [1080, 720],
-        "caption" : "CaveBlock"
-    },
-    "inputs" : {
-        "left" : "q",
-        "right" : "d",
-        "shoot" : "e",
-        "jump" : "space",
-        "crouch" : "left ctrl"
-    }
+  "screen": {
+    "size": [
+      1280,
+      640
+    ],
+    "caption": "CaveBlock"
+  },
+  "inputs": {
+    "left": "LEFT",
+    "right": "RIGHT",
+    "shoot": "SPACE",
+    "jump": "UP",
+    "crouch": "DOWN",
+    "use" : "RCTRL",
+    "igMenu" : "ESCAPE"
+  },
+  "terrainDecoder": {
+    "0": [
+      "WARN_2"
+    ],
+    "1": [
+      "CONCRETE_"
+    ],
+    "2" : [
+      "FLOOR_1"
+    ],
+    "*" : [
+      "CABLES_",
+      "VINES_"
+    ],
+    "/" : [
+      "GRID_",
+      "j"
+    ]
+  }
 }
