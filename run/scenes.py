@@ -189,8 +189,26 @@ class Options: #to handle the option menu display
                                                                         Rescaler(25, 1)), 
                                                                         border_radius=2)
         #text
-        self.useText = self.font2.render("Use (" + self.Data["inputs"]["shoot"] + ")", True, (225, 225, 225))
+        self.useText = self.font2.render("Use (" + self.Data["inputs"]["use"] + ")", True, (225, 225, 225))
         screen.blit(self.useText, (Rescaler(630, 0), Rescaler(435, 1)))
+        
+        #ingameMenu button
+        # indicator
+        if keys[eval("pygame.K_" + self.Data["inputs"]["igMenu"])]:
+            pygame.draw.rect(screen, (0, 255, 0), pygame.Rect(Rescaler(600, 0),
+                                                                        Rescaler(510, 1),
+                                                                        Rescaler(25, 0),
+                                                                        Rescaler(25 ,1)),
+                                                                        border_radius=2)
+        else:
+            pygame.draw.rect(screen, (255, 0, 0), pygame.Rect(Rescaler(600, 0),
+                                                                        Rescaler(510, 1),
+                                                                        Rescaler(25, 0),
+                                                                        Rescaler(25, 1)), 
+                                                                        border_radius=2)
+        #text
+        self.igText = self.font2.render("INGAME Menu (" + self.Data["inputs"]["igMenu"] + ")", True, (225, 225, 225))
+        screen.blit(self.igText, (Rescaler(630, 0), Rescaler(510, 1)))
 
 
 
@@ -203,9 +221,9 @@ class Game:
         self.terrain = DrawTerrain(screen, self.terrain, self.Data)
         self.inGameMenu = False
         
-    def tick(self, screen, events, keys): #! NOT TESTED, WAY NOT WORKING
-        if keys[eval("pygame.K_" + self.Data["inputs"]["igMenu"])] : self.inGameMenu #TODO : implement the igMenu
+    def tick(self, screen, events, keys):
+        if keys[eval("pygame.K_" + self.Data["inputs"]["igMenu"])] and testEvent([pygame.KEYDOWN], events): self.inGameMenu = not self.inGameMenu
         if self.inGameMenu:
-            pass
+            print("igMenu")
         else:
             screen.blit(self.terrain, (0, 0))

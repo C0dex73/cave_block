@@ -17,20 +17,21 @@
   },
   "terrainDecoder": {
     "0": [
-      "TECH_",
-      "SUPPORT_1",
-      "SUPPORT_2",
-      "SUPPORT_3A",
-      "SUPPORT_4A",
-      "SUPPORT_5",
-      "SUPPORT_6",
-      "SUPPORT_7A",
-      "VENT_",
-      "CRATE_",
-      "CONSOLE_"
+      "WARN_2"
     ],
     "1": [
       "CONCRETE_"
+    ],
+    "2" : [
+      "FLOOR_1"
+    ],
+    "*" : [
+      "CABLES_",
+      "VINES_"
+    ],
+    "/" : [
+      "GRID_",
+      "j"
     ]
   }
 }
