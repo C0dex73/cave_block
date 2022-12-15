@@ -48,8 +48,7 @@ def TerrainGen(path=None):
                ]
     
     bit = 0
-    
-    theme = random.randint(3, )
+    theme = random.choice(["2", "3"])
     
     for line in range(len(terrain)):
         for column in range(len(terrain[line])):
@@ -79,9 +78,15 @@ def TerrainGen(path=None):
             if line == len(terrain)-1 :
                 for i in range(line - bit+1, line):
                     terrain[i][column] = "1"
-                    
-            if terrain[line][column] == "0" and random.randint(0, 9) == 0:
-                terrain[line][column] = "2;/"
+                
+            if terrain[line][column] == "0":
+                percent = random.randint(1, 100)
+                if percent <= 5:
+                    terrain[line][column] = "/"
+                elif percent <= 10:
+                    terrain[line][column] = theme + "a;//"
+                elif percent < 
+                
         
     if path is not None:
         json.dump(terrain, open(path, 'w'))
