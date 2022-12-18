@@ -38,7 +38,7 @@ class Menu: #to handle the menu display
         if self.optionButtonSurface.collidepoint(pygame.mouse.get_pos()[0], pygame.mouse.get_pos()[1]): #if the mouse hoover the text
             self.OptionText = self.font.render("Option", True, (250, 250, 250)) #make it lighter
             if testEvent([pygame.MOUSEBUTTONDOWN], events): #if the user click
-                self.next = Options(screen, self.Data) #pass to Option scene (state = 2 in mainloop)
+                self.next = Options(screen, self.Data, self) #pass to Option scene (state = 2 in mainloop)
         else: 
             self.OptionText = self.font.render("Option", True, (200, 200, 200)) #set the text to his normal color
         screen.blit(self.OptionText, optionButtonTLCorner) #render the text
@@ -57,14 +57,15 @@ class Menu: #to handle the menu display
 
 
 class Options: #to handle the option menu display
-    def __init__(self, screen, Data): #called when initializing this class
-        self.Data = Data
+    def __init__(self, screen, Data, returnScene): #called when initializing this class
+        self.returnScene = returnScene #save the scene to call at the end of the option scene
+        self.Data = Data #save Data
         self.next = self #set the next scene to itself
         self.font1 = pygame.font.Font("textures/font.ttf", Rescaler(100, 0)) #set the fonts
         self.font2 = pygame.font.Font("textures/font2.ttf", Rescaler(25, 0))
 
         #parts of tick function to avoid errors with self call
-        self.MenuText = self.font1.render("Menu", True, (250, 250, 250)) #set the text of the ExitButton
+        self.returnText = self.font1.render("Return", True, (250, 250, 250)) #set the text of the ExitButton
 
     def tick(self, screen, events, keys): #called every active tick
         #background image
@@ -72,16 +73,17 @@ class Options: #to handle the option menu display
         self.bg = pygame.transform.scale(self.bg, self.Data["screen"]["size"]) #rescale the image to the size of the screen
         screen.blit(self.bg, (0, 0)) #print the image on the screen
 
-        #MENU button
-        menuButtonTLCorner = (Rescaler(50, 0), Rescaler(600, 1)) #set the topleft corner of the button
-        self.menuButtonSurface = self.MenuText.get_rect(topleft=menuButtonTLCorner) #get the whole text surface
+        #RETURN button
+        returnButtonTLCorner = (Rescaler(50, 0), Rescaler(600, 1)) #set the topleft corner of the button
+        self.menuButtonSurface = self.returnText.get_rect(topleft=returnButtonTLCorner) #get the whole text surface
         if self.menuButtonSurface.collidepoint(pygame.mouse.get_pos()[0], pygame.mouse.get_pos()[1]): #if the mouse hoover the text
-            self.MenuText = self.font1.render("Menu", True, (250, 250, 250)) #make it lighter
+            self.returnText = self.font1.render("Return", True, (250, 250, 250)) #make it lighter
             if testEvent([pygame.MOUSEBUTTONDOWN], events): #if the user click
-                self.next = Menu(screen, self.Data) #pass to Option scene (state = 2 in mainloop)
+                self.returnScene.next = self.returnScene #modify the .next atribute of the return scene beccause that was the Option scene
+                self.next = self.returnScene #pass to the last scene
         else: 
-            self.MenuText = self.font1.render("Menu", True, (200, 200, 200)) #set the text to his normal color
-        screen.blit(self.MenuText, menuButtonTLCorner) #render the text
+            self.returnText = self.font1.render("Return", True, (200, 200, 200)) #set the text to his normal color
+        screen.blit(self.returnText, returnButtonTLCorner) #render the text
         
         #right button 
         #indicator
@@ -248,7 +250,7 @@ class Game:
         if self.optionButtonSurface.collidepoint(pygame.mouse.get_pos()[0], pygame.mouse.get_pos()[1]): #if the mouse hoover the text
             self.OptionText = self.font.render("Option", True, (250, 250, 250)) #make it lighter
             if testEvent([pygame.MOUSEBUTTONDOWN], events): #if the user click
-                self.next = Options(screen, self.Data) #pass to Option scene (state = 2 in mainloop)
+                self.next = Options(screen, self.Data, self) #pass to Option scene (state = 2 in mainloop)
         else: 
             self.OptionText = self.font.render("Option", True, (200, 200, 200)) #set the text to his normal color
         igMenuSurface.blit(self.OptionText, optionButtonTLCorner) #render the text
