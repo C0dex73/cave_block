@@ -97,6 +97,8 @@ def TerrainGen():
                     terrain[line][column] = theme
                 else:
                     terrain[line][column] = theme + "C+"
+                    
+    
         
     return terrain #return the generated terrain
     

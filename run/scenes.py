@@ -213,17 +213,55 @@ class Options: #to handle the option menu display
 
 
 class Game:
-    def __init__(self, screen, Data): #called when initializing this class
+    def __init__(self, screen, Data, player=None): #called when initializing this class
+        self.font = pygame.font.Font("textures/font.ttf", Rescaler(100, 0)) #set the font
+        self.OptionText = self.font.render("Option", True, (250, 250, 250)) #set the text of the OptionButton
+        self.MenuText = self.font.render("Menu", True, (250, 250, 250)) #set the text of the ExitButton
         self.Data = Data
         self.terrain = TerrainGen()
-        self.player = Player(screen)
+        if player == None:
+            self.player = Player(screen)
+        else :
+            self.player = player
         self.next = self
         self.terrain = DrawTerrain(screen, self.terrain, self.Data)
         self.inGameMenu = False
         
     def tick(self, screen, events, keys):
-        if keys[eval("pygame.K_" + self.Data["inputs"]["igMenu"])] and testEvent([pygame.KEYDOWN], events): self.inGameMenu = not self.inGameMenu
-        if self.inGameMenu:
-            print("igMenu")
-        else:
+        if keys[eval("pygame.K_" + self.Data["inputs"]["igMenu"])] and testEvent([pygame.KEYDOWN], events): self.inGameMenu = not self.inGameMenu #if the user press the igMenu key then toggle the menu interface
+        if self.inGameMenu: #if the user is on the igMenu
+            self.__IGMenu(screen, events) #render it
+        else: #else do the game normal tick
             screen.blit(self.terrain, (0, 0))
+            
+    def __IGMenu(self, screen, events): #render the in-game menu 
+        screen.blit(self.terrain, (0, 0)) #render the background in first to set in background
+        igMenuSurface = pygame.Surface(self.Data["screen"]["size"], pygame.SRCALPHA).convert_alpha()
+        menuFilter = pygame.Surface(self.Data["screen"]["size"])
+        menuFilter.set_alpha(128)
+        menuFilter.fill((75, 75, 75))
+        igMenuSurface.blit(menuFilter.convert_alpha(), (0, 0))
+        
+        #OPTION button
+        optionButtonTLCorner = (Rescaler(50, 0), Rescaler(500, 1)) #set the topleft corner of the button
+        self.optionButtonSurface = self.OptionText.get_rect(topleft=optionButtonTLCorner) #get the whole text surface
+        if self.optionButtonSurface.collidepoint(pygame.mouse.get_pos()[0], pygame.mouse.get_pos()[1]): #if the mouse hoover the text
+            self.OptionText = self.font.render("Option", True, (250, 250, 250)) #make it lighter
+            if testEvent([pygame.MOUSEBUTTONDOWN], events): #if the user click
+                self.next = Options(screen, self.Data) #pass to Option scene (state = 2 in mainloop)
+        else: 
+            self.OptionText = self.font.render("Option", True, (200, 200, 200)) #set the text to his normal color
+        igMenuSurface.blit(self.OptionText, optionButtonTLCorner) #render the text
+        
+        #MENU button
+        menuButtonTLCorner = (Rescaler(50, 0), Rescaler(600, 1)) #set the topleft corner of the button
+        self.menuButtonSurface = self.MenuText.get_rect(topleft=menuButtonTLCorner) #get the whole text surface
+        if self.menuButtonSurface.collidepoint(pygame.mouse.get_pos()[0], pygame.mouse.get_pos()[1]): #if the mouse hoover the text
+            self.MenuText = self.font.render("Menu", True, (250, 250, 250)) #make it lighter
+            if testEvent([pygame.MOUSEBUTTONDOWN], events): #if the user click
+                self.next = Menu(screen, self.Data) #pass to Option scene (state = 2 in mainloop)
+        else: 
+            self.MenuText = self.font.render("Menu", True, (200, 200, 200)) #set the text to his normal color
+        igMenuSurface.blit(self.MenuText, menuButtonTLCorner) #render the text
+        
+        screen.blit(igMenuSurface, (0, 0))
