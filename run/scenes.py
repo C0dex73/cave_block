@@ -230,13 +230,13 @@ class Game:
     def tick(self, screen, events, keys):
         if keys[eval("pygame.K_" + self.Data["inputs"]["igMenu"])] and testEvent([pygame.KEYDOWN], events): self.inGameMenu = not self.inGameMenu #if the user press the igMenu key then toggle the menu interface
         if self.inGameMenu: #if the user is on the igMenu
-            self.__IGMenu(screen, events, keys) #render it
+            self.__IGMenu(screen, events) #render it
         else: #else do the game normal tick
             screen.blit(self.terrain, (0, 0))
             
-    def __IGMenu(self, screen, events, keys): #render the in-game menu
+    def __IGMenu(self, screen, events): #render the in-game menu 
         screen.blit(self.terrain, (0, 0)) #render the background in first to set in background
-        igMenuSurface = pygame.Surface(self.Data["screen"]["size"])
+        igMenuSurface = pygame.Surface(self.Data["screen"]["size"], pygame.SRCALPHA).convert_alpha()
         menuFilter = pygame.Surface(self.Data["screen"]["size"])
         menuFilter.set_alpha(128)
         menuFilter.fill((75, 75, 75))

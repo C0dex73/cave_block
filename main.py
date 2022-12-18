@@ -24,7 +24,7 @@ def main():
         else :
             scene = scene.next #change to the next scene defined by the actual scene
         pygame.display.update() #update the screen
-        clock.tick(120) #set the clock rate to 60 fps
+        clock.tick(60) #set the clock rate to 60 fps
     pygame.quit() #stop the program
 
 #main program
