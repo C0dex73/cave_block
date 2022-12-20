@@ -3,6 +3,14 @@ import random
 import pygame
 import os
 
+def GetData(jsonFilePath):
+    with open(jsonFilePath, 'r') as jsonFile:
+        return json.load(jsonFile)
+    
+def SetData(data, jsonFilePath):
+    with open(jsonFilePath, 'w') as jsonFile:
+        json.dump(data, jsonFile)
+
 def Rescaler(pos, axis):
     Data = json.load(open("data/app.json", "r"))
     actualResolution = Data["screen"]["size"]
@@ -24,7 +32,7 @@ def testEvent(Tevents, Revents):
         returnVar.append({str(event) : False})
     return returnVar
 
-def TerrainGen():
+def TerrainGen(Data):
     #code the terrain by block with symbols
     #differents calcs is represented by differents symbols
     #there can be multiple calcs with a transparent background for example
@@ -88,19 +96,52 @@ def TerrainGen():
             if terrain[line][column].__contains__("0"): #if its the background
                 percent = random.randint(1, 100) #set percent as a variable wich will define the type of the block
                 if percent <= 5: #5% chance to be a neutral vent (no theme)
-                    terrain[line][column] = "/"
+                    terrain[line][column] += ";" + "/"
                 elif percent <= 10: #5% chance to be a theme vent with the assocate background for transparent parts
-                    terrain[line][column] = theme + "a;//" + theme
+                    terrain[line][column] += ";" + theme + "a;//" + theme
                 elif percent <= 45:
-                    terrain[line][column] = theme + "C"
+                    terrain[line][column] += ";" + theme + "C"
                 elif percent <= 80:
-                    terrain[line][column] = theme
+                    terrain[line][column] += ";" + theme
                 else:
-                    terrain[line][column] = theme + "C+"
+                    terrain[line][column] += ";" + theme + "C+"
                     
-    
+    positions = {
+        "player" : (0, 0),
+        "mines" : [],
+        "flyingThing" : []
+    }
+    find = False
+    for terrainLine in range(len(terrain)+1):
+        line = len(terrain) - terrainLine -2
+        for case in range(10):
+            if terrain[line][case].__contains__("0") and terrain[line+1][case].__contains__("0") and terrain[line][case+1].__contains__("0") and terrain[line+1][case+1].__contains__("0"):
+                find = True
+                terrain[line][case] = theme + "DD"
+                terrain[line+1][case] = "A"
+                terrain[line+1][case+1] = "A"
+                terrain[line][case+1] = "A"
+                positions["player"] = (case*Data["screen"]["size"][0]/40, line*Data["screen"]["size"][1]/20)
+                break
+        if find:
+            break
+
+    find = False
+    for terrainCase in range(10):
+        case = len(terrain[0]) - terrainCase -2
+        for terrainLine in range(len(terrain)+1):
+            line = len(terrain) - terrainLine -2
+            if terrain[line][case].__contains__("0") and terrain[line+1][case].__contains__("0") and terrain[line][case+1].__contains__("0") and terrain[line+1][case+1].__contains__("0"):
+                find = True
+                terrain[line][case] = theme + "DF"
+                terrain[line+1][case] = "A"
+                terrain[line+1][case+1] = "A"
+                terrain[line][case+1] = "A"
+                break
+        if find:
+            break
         
-    return terrain #return the generated terrain
+    return terrain, positions #return the generated terrain
     
 def DrawTerrain(screen, CodedTerrain, Data, saveFilePath=None): #TODO : implement the seed mechanism and the colliders
     finalTerrainSurface = pygame.Surface(Data["screen"]["size"]) #* this work tho
@@ -118,9 +159,10 @@ def DrawTerrain(screen, CodedTerrain, Data, saveFilePath=None): #TODO : implemen
                     for acceptedStr in Decoder[blockCalc]: #if it correspond to an accepted texture
                         if image.__contains__(acceptedStr):
                             finalImageList.append(image) #add it to finalImageList
-                            
+                size = [1, 1]
+                if blockCalc.__contains__("D"): size = [2, 2]
                 #then print it
                 caseImage = pygame.image.load("textures/used/" + random.choice(finalImageList)).convert_alpha()
-                caseImage = pygame.transform.scale(caseImage, (Data["screen"]["size"][0]/40, Data["screen"]["size"][1]/20))
+                caseImage = pygame.transform.scale(caseImage, (size[0] * Data["screen"]["size"][0] / 40, size[1] * Data["screen"]["size"][1] / 20))
                 finalTerrainSurface.blit(caseImage, (case*Data["screen"]["size"][0]/40, line*Data["screen"]["size"][1]/20))
     return finalTerrainSurface

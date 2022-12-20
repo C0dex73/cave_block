@@ -1,5 +1,5 @@
 from run.tools import *
-from run.player import Player
+from run.entities import Player
 import pygame
 
 class Menu: #to handle the menu display
@@ -16,6 +16,7 @@ class Menu: #to handle the menu display
     
     
     def tick(self, screen, events, keys): #called every active tick
+        self.Data = GetData("data/app.json") #actualize the data
         #background image
         self.bg = pygame.image.load("textures/test.png").convert() #load the bg menu image #TODO : use the real path
         self.bg = pygame.transform.scale(self.bg, self.Data["screen"]["size"]) #rescale the image to the size of the screen
@@ -68,6 +69,7 @@ class Options: #to handle the option menu display
         self.returnText = self.font1.render("Return", True, (250, 250, 250)) #set the text of the ExitButton
 
     def tick(self, screen, events, keys): #called every active tick
+        self.Data = GetData("data/app.json") #actualize the data
         #background image
         self.bg = pygame.image.load("textures/used/bigdoor23.png").convert() #load the bg option image #TODO : replace this with the real path
         self.bg = pygame.transform.scale(self.bg, self.Data["screen"]["size"]) #rescale the image to the size of the screen
@@ -220,9 +222,9 @@ class Game:
         self.OptionText = self.font.render("Option", True, (250, 250, 250)) #set the text of the OptionButton
         self.MenuText = self.font.render("Menu", True, (250, 250, 250)) #set the text of the ExitButton
         self.Data = Data
-        self.terrain = TerrainGen()
+        self.terrain, self.positions = TerrainGen(self.Data)
         if player == None:
-            self.player = Player(screen)
+            self.player = Player(screen, self.Data, self.positions["player"])
         else :
             self.player = player
         self.next = self
@@ -230,10 +232,13 @@ class Game:
         self.inGameMenu = False
         
     def tick(self, screen, events, keys):
-        if keys[eval("pygame.K_" + self.Data["inputs"]["igMenu"])] and testEvent([pygame.KEYDOWN], events): self.inGameMenu = not self.inGameMenu #if the user press the igMenu key then toggle the menu interface
+        self.Data = GetData("data/app.json") #actualize the data
+        #if the user press the igMenu key then toggle the menu interface
+        if keys[eval("pygame.K_" + self.Data["inputs"]["igMenu"])] and testEvent([pygame.KEYDOWN], events): self.inGameMenu = not self.inGameMenu
         if self.inGameMenu: #if the user is on the igMenu
             self.__IGMenu(screen, events) #render it
-        else: #else do the game normal tick
+        else: #else do the game normal game tick
+            
             screen.blit(self.terrain, (0, 0))
             
     def __IGMenu(self, screen, events): #render the in-game menu 
