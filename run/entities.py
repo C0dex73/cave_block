@@ -45,25 +45,45 @@ class Player():
         self.checkSprites.add(rightCheckSprite)
         self.checkSprites.add(leftCheckSprite)
         
+        self.isGrounded = False
+        self.isCrouching = False
+        self.oldIsCrouching = False
         
 
     def tick(self, screen, events, keys, terrainCollider):
 
         #bool(Sprite()) will return True if the Sprite exists, we check if the 
-        isGrounded = bool(pygame.sprite.spritecollideany(self.checkSprites.sprites()[0], terrainCollider))
-        isCrouching = keys[eval("pygame.K_" + self.Data["inputs"]["crouch"])] and isGrounded
+        self.isGrounded = bool(pygame.sprite.spritecollideany(self.checkSprites.sprites()[0], terrainCollider))
+        self.isCrouching = keys[eval("pygame.K_" + self.Data["inputs"]["crouch"])]
+        
+        if self.isCrouching == False and self.oldIsCrouching == True and pygame.sprite.spritecollideany(self.checkSprites.sprites()[1], terrainCollider): self.isCrouching = True
         
         #gravity
-        if not isGrounded : self.direction.y += 0.1
+        if not self.isGrounded : self.direction.y += 0.1
+        
+        if self.isCrouching :
+            self.checkSprites.sprites()[1].rect.centery = self.checkSprites.sprites()[0].rect.centery - 2 - self.Data["screen"]["size"][0]/40 #type: ignore (rect not static)
+            self.checkSprites.sprites()[2].rect.height = self.Data["screen"]["size"][0]/40 - 4 #type: ignore (rect not static)
+            self.checkSprites.sprites()[2].rect.centery = self.checkSprites.sprites()[0].rect.centery - 2 - self.Data["screen"]["size"][0]/40/2 #type: ignore (rect not static)
+            self.checkSprites.sprites()[3].rect.height = self.Data["screen"]["size"][0]/40 - 4 #type: ignore (rect not static)
+            self.checkSprites.sprites()[3].rect.centery = self.checkSprites.sprites()[0].rect.centery - 2 - self.Data["screen"]["size"][0]/40/2 #type: ignore (rect not static)
+        else:
+            self.checkSprites.sprites()[1].rect.centery = self.checkSprites.sprites()[0].rect.centery - 2 - 2*self.Data["screen"]["size"][0]/40 #type: ignore (rect not static)
+            self.checkSprites.sprites()[2].rect.height = 2*self.Data["screen"]["size"][0]/40 - 4 #type: ignore (rect not static)
+            self.checkSprites.sprites()[2].rect.centery = self.checkSprites.sprites()[0].rect.centery - 2 - self.Data["screen"]["size"][0]/40 #type: ignore (rect not static)
+            self.checkSprites.sprites()[3].rect.height = 2*self.Data["screen"]["size"][0]/40 - 4 #type: ignore (rect not static)
+            self.checkSprites.sprites()[3].rect.centery = self.checkSprites.sprites()[0].rect.centery - 2 - self.Data["screen"]["size"][0]/40 #type: ignore (rect not static)
         
         #load the image
-        imagePath = "textures/used/Astro_"
-        if isCrouching : 
-            imagePath += "C"
-            if self.imageState >= 4: self.imageState = 1
+        imagePath = "textures/used/Astro_" #constant file path
+        imageSize = [1*self.Data["screen"]["size"][0]/40, 2*self.Data["screen"]["size"][1]/20] #40 and 20 if the number of lines and columns
+        if self.isCrouching : 
+            imagePath += "C" #add C to the path
+            if self.imageState >= 4: self.imageState = 1 #same as line 117 but for crouching (only 3 images)
+            imageSize[1] /= 2 #two times smaller in height
         playerImage = pygame.image.load(imagePath + str(math.floor(self.imageState)) + ".png").convert_alpha()
-        playerImage = pygame.transform.scale(playerImage, (1*self.Data["screen"]["size"][0]/40, 2*self.Data["screen"]["size"][1]/20)) #40 and 20 if the number of lines and columns
-        self.rect = playerImage.get_rect(topleft = self.position) #40 and 20 if the number of lines and columns
+        playerImage = pygame.transform.scale(playerImage, imageSize) 
+        self.rect = playerImage.get_rect(topleft = self.position)
         
         #get the inputs and change the movement of the player
         if keys[eval("pygame.K_" + self.Data["inputs"]["right"])] :
@@ -73,9 +93,9 @@ class Player():
         else:
             self.direction.x = 0
         
-        if keys[eval("pygame.K_" + self.Data["inputs"]["jump"])] and isGrounded: #to jump the player have to be on the ground
-            self.direction.y = -1 * self.speed
-        elif isCrouching:
+        if keys[eval("pygame.K_" + self.Data["inputs"]["jump"])] and self.isGrounded: #to jump the player have to be on the ground
+            self.direction.y = -4
+        elif self.isCrouching:
             self.direction.x /= 2
             
         #rotate the image before direction correction
@@ -83,7 +103,7 @@ class Player():
         
         #for each check sprite if the player do a movement to go in the wall, then cancel this movement
         if pygame.sprite.spritecollideany(self.checkSprites.sprites()[1], terrainCollider) and self.direction.y < 0: self.direction.y = 0
-        if pygame.sprite.spritecollideany(self.checkSprites.sprites()[0], terrainCollider) and self.direction.y > 0: self.direction.y = 0
+        if pygame.sprite.spritecollideany(self.checkSprites.sprites()[0], terrainCollider) and self.direction.y > 0: self.direction.y = 0 
         if pygame.sprite.spritecollideany(self.checkSprites.sprites()[2], terrainCollider) and self.direction.x > 0: self.direction.x = 0
         if pygame.sprite.spritecollideany(self.checkSprites.sprites()[3], terrainCollider) and self.direction.x < 0: self.direction.x = 0
                 
@@ -99,7 +119,7 @@ class Player():
         #change the image of the player relatyvely to the time passed
         if self.direction.x != 0 and time.time_ns()//10**8 % 10 != self.imageTimer: #same calcul as line 11, and if it's different
             self.imageState += 0.125
-            if isCrouching and self.imageState == 4 : self.imageState = 1
             if self.imageState == 5 : self.imageState = 1
         
         screen.blit(playerImage, self.position)
+        self.oldIsCrouching = self.isCrouching #shift the value of isCrouching
