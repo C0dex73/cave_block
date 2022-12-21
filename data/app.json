@@ -1,4 +1,5 @@
 {
+  "devMode" : false,
   "screen": {
     "size": [
       1280,
@@ -79,5 +80,10 @@
     "A" : [
       "AIR"
     ]
+  },
+  "entities" : {
+      "player" : {
+        "speed" : 2
+    }
   }
 }

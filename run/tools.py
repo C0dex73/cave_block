@@ -63,23 +63,23 @@ def TerrainGen(Data):
     bit = 0
     theme = random.choice(["2", "3"]) #theme id (see app.json file)
     
-    for line in range(len(terrain)):
-        for column in range(len(terrain[line])): #for each block
+    for line in range(20): #for each line (20 = number of lines)
+        for column in range(40): #for each block (40 = number of columns)
             
             #if its a border block 
-            if column == 0 or column == len(terrain[line])-1 or line == 0 or line == len(terrain)-1:
+            if column == 0 or column == 40-1 or line == 0 or line == 20-1: #20 = number of lines and 40 = number of columns
                 bit += random.randint(-1, 1) #add or remove 1 to the lenght of the borders                   
                 if bit == -1 :
                     bit = 0
-                if bit >= len(terrain)/4 :
-                    bit = int(len(terrain)/4-1)
+                if bit >= 20/4 : #20 = number of lines
+                    bit = int(20/4-1) #20 = number of lines
                 terrain[line][column] = "1" #set the border
             
             if column == 0: #if it's the left border then add the border lenght
                 for i in range(column, column + bit+1):
                     terrain[line][i] = "1"
                         
-            if column == len(terrain[line])-1: #if it's the right border then add the border lenght
+            if column == 40-1: #if it's the right border then add the border lenght (40 = number of columns)
                 for i in range(column - bit+1, column):
                     terrain[line][i] = "1"
                         
@@ -99,11 +99,11 @@ def TerrainGen(Data):
                     terrain[line][column] += ";" + "/"
                 elif percent <= 10: #5% chance to be a theme vent with the assocate background for transparent parts
                     terrain[line][column] += ";" + theme + "a;//" + theme
-                elif percent <= 45:
+                elif percent <= 45: #35% chance to be a crate
                     terrain[line][column] += ";" + theme + "C"
-                elif percent <= 80:
+                elif percent <= 80: #35% chance to be a basic background (with the assocate theme)
                     terrain[line][column] += ";" + theme
-                else:
+                else: #20% chance to be a decorated crate
                     terrain[line][column] += ";" + theme + "C+"
                     
     positions = {
@@ -112,8 +112,8 @@ def TerrainGen(Data):
         "flyingThing" : []
     }
     find = False
-    for terrainLine in range(len(terrain)+1):
-        line = len(terrain) - terrainLine -2
+    for terrainLine in range(20 + 1): #20 = number of lines
+        line = 20 - terrainLine -2 #20 = number of lines
         for case in range(10):
             if terrain[line][case].__contains__("0") and terrain[line+1][case].__contains__("0") and terrain[line][case+1].__contains__("0") and terrain[line+1][case+1].__contains__("0"):
                 find = True
@@ -121,16 +121,15 @@ def TerrainGen(Data):
                 terrain[line+1][case] = "A"
                 terrain[line+1][case+1] = "A"
                 terrain[line][case+1] = "A"
-                positions["player"] = (case*Data["screen"]["size"][0]/40, line*Data["screen"]["size"][1]/20)
+                positions["player"] = (case*Data["screen"]["size"][0]/40, line*Data["screen"]["size"][1]/20) #40 = number of columns
                 break
         if find:
             break
-
     find = False
     for terrainCase in range(10):
-        case = len(terrain[0]) - terrainCase -2
-        for terrainLine in range(len(terrain)+1):
-            line = len(terrain) - terrainLine -2
+        case = 40 - terrainCase -2 #40 = number of columns
+        for terrainLine in range(20 + 1): #20 = number of lines
+            line = 20 - terrainLine -2 #20 = number of lines
             if terrain[line][case].__contains__("0") and terrain[line+1][case].__contains__("0") and terrain[line][case+1].__contains__("0") and terrain[line+1][case+1].__contains__("0"):
                 find = True
                 terrain[line][case] = theme + "DF"
@@ -145,6 +144,7 @@ def TerrainGen(Data):
     
 def DrawTerrain(screen, CodedTerrain, Data, saveFilePath=None): #TODO : implement the seed mechanism and the colliders
     finalTerrainSurface = pygame.Surface(Data["screen"]["size"]) #* this work tho
+    finalColliderSurface = pygame.sprite.Group()
     if saveFilePath is not None:
         CodedTerrain = json.load(open(saveFilePath, 'r'))
         
@@ -159,10 +159,20 @@ def DrawTerrain(screen, CodedTerrain, Data, saveFilePath=None): #TODO : implemen
                     for acceptedStr in Decoder[blockCalc]: #if it correspond to an accepted texture
                         if image.__contains__(acceptedStr):
                             finalImageList.append(image) #add it to finalImageList
+                #set the size (units = blocks)
                 size = [1, 1]
-                if blockCalc.__contains__("D"): size = [2, 2]
+                if blockCalc.__contains__("D"): size = [2, 2] #if it's a door, it's 2 times bigger
+                
                 #then print it
                 caseImage = pygame.image.load("textures/used/" + random.choice(finalImageList)).convert_alpha()
-                caseImage = pygame.transform.scale(caseImage, (size[0] * Data["screen"]["size"][0] / 40, size[1] * Data["screen"]["size"][1] / 20))
-                finalTerrainSurface.blit(caseImage, (case*Data["screen"]["size"][0]/40, line*Data["screen"]["size"][1]/20))
-    return finalTerrainSurface
+                caseImage = pygame.transform.scale(caseImage, (size[0] * Data["screen"]["size"][0] / 40, size[1] * Data["screen"]["size"][1] / 20)) #40 = number of columns and 20 = number of rows
+                finalTerrainSurface.blit(caseImage, (case*Data["screen"]["size"][0]/40, line*Data["screen"]["size"][1]/20)) #40 = number of columns and 20 = number of rows
+
+                #and finally set the collider logic
+                if blockCalc == "1":
+                    blockSprite = pygame.sprite.Sprite()
+                    blockSprite.rect = pygame.Rect(case*Data["screen"]["size"][0]/40, line*Data["screen"]["size"][1]/20, size[0] * Data["screen"]["size"][0] / 40, size[1] * Data["screen"]["size"][1] / 20) #40 = number of columns and 20 = number of rows
+                    finalColliderSurface.add(blockSprite) # type: ignore
+                    
+                    
+    return finalTerrainSurface, finalColliderSurface

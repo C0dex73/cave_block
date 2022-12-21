@@ -224,11 +224,11 @@ class Game:
         self.Data = Data
         self.terrain, self.positions = TerrainGen(self.Data)
         if player == None:
-            self.player = Player(screen, self.Data, self.positions["player"])
+            self.player = Player(screen, self.positions["player"], self.Data)
         else :
             self.player = player
         self.next = self
-        self.terrain = DrawTerrain(screen, self.terrain, self.Data)
+        self.toDrawTerrain, self.collider = DrawTerrain(screen, self.terrain, self.Data)
         self.inGameMenu = False
         
     def tick(self, screen, events, keys):
@@ -238,11 +238,12 @@ class Game:
         if self.inGameMenu: #if the user is on the igMenu
             self.__IGMenu(screen, events) #render it
         else: #else do the game normal game tick
+            screen.blit(self.toDrawTerrain, (0, 0))
+            self.player.tick(screen, events, keys, self.collider)
             
-            screen.blit(self.terrain, (0, 0))
             
     def __IGMenu(self, screen, events): #render the in-game menu 
-        screen.blit(self.terrain, (0, 0)) #render the background in first to set in background
+        screen.blit(self.toDrawTerrain, (0, 0)) #render the background in first to set in background
         igMenuSurface = pygame.Surface(self.Data["screen"]["size"], pygame.SRCALPHA).convert_alpha()
         menuFilter = pygame.Surface(self.Data["screen"]["size"])
         menuFilter.set_alpha(128)
