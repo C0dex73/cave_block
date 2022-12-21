@@ -1,1 +1,3 @@
-print(round(0.5))
+import pytmx
+
+map = pytmx.load_pygame("e")

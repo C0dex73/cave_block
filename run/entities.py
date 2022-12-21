@@ -51,12 +51,17 @@ class Player():
 
         #bool(Sprite()) will return True if the Sprite exists, we check if the 
         isGrounded = bool(pygame.sprite.spritecollideany(self.checkSprites.sprites()[0], terrainCollider))
+        isCrouching = keys[eval("pygame.K_" + self.Data["inputs"]["crouch"])] and isGrounded
         
         #gravity
         if not isGrounded : self.direction.y += 0.1
         
-        #draw the image
-        playerImage = pygame.image.load("textures/used/Astro_" + str(math.floor(self.imageState)) + ".png").convert_alpha()
+        #load the image
+        imagePath = "textures/used/Astro_"
+        if isCrouching : 
+            imagePath += "C"
+            if self.imageState >= 4: self.imageState = 1
+        playerImage = pygame.image.load(imagePath + str(math.floor(self.imageState)) + ".png").convert_alpha()
         playerImage = pygame.transform.scale(playerImage, (1*self.Data["screen"]["size"][0]/40, 2*self.Data["screen"]["size"][1]/20)) #40 and 20 if the number of lines and columns
         self.rect = playerImage.get_rect(topleft = self.position) #40 and 20 if the number of lines and columns
         
@@ -70,7 +75,7 @@ class Player():
         
         if keys[eval("pygame.K_" + self.Data["inputs"]["jump"])] and isGrounded: #to jump the player have to be on the ground
             self.direction.y = -1 * self.speed
-        elif keys[eval("pygame.K_" + self.Data["inputs"]["crouch"])] and isGrounded:
+        elif isCrouching:
             self.direction.x /= 2
             
         #rotate the image before direction correction
@@ -94,6 +99,7 @@ class Player():
         #change the image of the player relatyvely to the time passed
         if self.direction.x != 0 and time.time_ns()//10**8 % 10 != self.imageTimer: #same calcul as line 11, and if it's different
             self.imageState += 0.125
+            if isCrouching and self.imageState == 4 : self.imageState = 1
             if self.imageState == 5 : self.imageState = 1
         
         screen.blit(playerImage, self.position)
