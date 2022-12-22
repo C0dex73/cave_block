@@ -1,3 +1,11 @@
-import pytmx
+conditions = [
+    a == 1,
+    a == 2,
+    a == 56,
+    a == 59,
+]
 
-map = pytmx.load_pygame("e")
+for condition in conditions:
+    if condition :
+        #thing
+        break
