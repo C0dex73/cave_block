@@ -1,5 +1,6 @@
 from run.tools import *
-from run.entities import Player
+from run.entities import *
+from run.interactions import *
 import pygame
 
 class Menu: #to handle the menu display
@@ -217,19 +218,29 @@ class Options: #to handle the option menu display
 
 
 class Game:
-    def __init__(self, screen, Data, player=None): #called when initializing this class
+    def __init__(self, screen, Data, player=None, mines=None, flyers=None, igMenu=False): #called when initializing this class
         self.font = pygame.font.Font("textures/font.ttf", Rescaler(100, 0)) #set the font
         self.OptionText = self.font.render("Option", True, (250, 250, 250)) #set the text of the OptionButton
         self.MenuText = self.font.render("Menu", True, (250, 250, 250)) #set the text of the ExitButton
-        self.Data = Data
-        self.terrain, self.positions = TerrainGen(self.Data)
+        self.Data = Data #set the data
+        
+        #entities
+        self.terrain, self.positions = TerrainGen(self.Data) #generate the coded terrain and the positions of the entities
         if player == None:
             self.player = Player(screen, self.positions["player"], self.Data)
         else :
             self.player = player
-        self.next = self
-        self.toDrawTerrain, self.collider = DrawTerrain(screen, self.terrain, self.Data)
-        self.inGameMenu = False
+            
+        if mines == None:
+            self.mines = []
+            for minePos in self.positions["mines"]:
+                self.mines.append(Mine(screen, minePos, self.Data))
+        else :
+            self.mines = mines
+        
+        self.next = self #set next scene
+        self.toDrawTerrain, self.collider = DrawTerrain(screen, self.terrain, self.Data) #set terrain image and collider
+        self.inGameMenu = igMenu #set toggleable var for in-game menu
         
     def tick(self, screen, events, keys):
         self.Data = GetData("data/app.json") #actualize the data

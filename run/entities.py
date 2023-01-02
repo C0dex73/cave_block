@@ -117,9 +117,23 @@ class Player():
         self.position = (self.checkSprites.sprites()[3].rect.centerx, self.checkSprites.sprites()[1].rect.centery) # type: ignore (rect not static)
 
         #change the image of the player relatyvely to the time passed
-        if self.direction.x != 0 and time.time_ns()//10**8 % 10 != self.imageTimer: #same calcul as line 11, and if it's different
+        #every 1/10 second, we add 1/8 to the image state
+        #so 1/8 per 1/10 = 10 images avery 8 seconds
+        if self.direction.x != 0 and time.time_ns()//10**8 % 10 != self.imageTimer: #^same calcul as line 11, and if it's different
             self.imageState += 0.125
-            if self.imageState == 5 : self.imageState = 1
+            if self.imageState == 5 : self.imageState = 1 #if we overflowed (no file named astro_)
         
         screen.blit(playerImage, self.position)
         self.oldIsCrouching = self.isCrouching #shift the value of isCrouching
+        
+class Mine(pygame.sprite.Sprite):
+    
+    def __init__(self, screen, position, Data):
+        self.Data = Data
+        self.imageState = 1
+        #^same as line 11
+        self.imageTimer = time.time_ns()//10**8 % 10
+        
+    
+    def tick(self):
+        pass
