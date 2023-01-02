@@ -1,8 +1,16 @@
+"""
+this is the main module that will be called when the user launch the game
+it call run folder
+it init pygame and the main loop
+"""
 import pygame
 import json
-from run import *
+from run.scenes import *
 
 def main():
+    """
+    this is the main function that will be called when the module is executed
+    """
     pygame.init() #initialize pygame
     screen = pygame.display.set_mode(Data["screen"]["size"]) #init the screen
     state = 1 # state variable
@@ -19,7 +27,7 @@ def main():
                 state = 0 #stop the main loop
 
         scene.tick(screen, events, keys) #do everything to do in the tick of the scene
-        if scene.next == None: #if we don't have any scene next
+        if scene.next is None: #if we don't have any scene next
             state = 0 #stop the main loop
         else :
             scene = scene.next #change to the next scene defined by the actual scene

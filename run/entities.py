@@ -121,7 +121,7 @@ class Player():
         #so 1/8 per 1/10 = 10 images avery 8 seconds
         if self.direction.x != 0 and time.time_ns()//10**8 % 10 != self.imageTimer: #^same calcul as line 11, and if it's different
             self.imageState += 0.125
-            if self.imageState == 5 : self.imageState = 1 #if we overflowed (no file named astro_)
+            if self.imageState == 5 : self.imageState = 1 #if we overflowed (no file named astro_5)
         
         screen.blit(playerImage, self.position)
         self.oldIsCrouching = self.isCrouching #shift the value of isCrouching
@@ -133,7 +133,21 @@ class Mine(pygame.sprite.Sprite):
         self.imageState = 1
         #^same as line 11
         self.imageTimer = time.time_ns()//10**8 % 10
+        self.position = position
+        
+        #generate the image
+        mineImage = pygame.image.load("textures/used/MINE_" + str(self.imageState) + ".png").convert_alpha()
+        mineImage = pygame.transform.scale(mineImage, (1*self.Data["screen"]["size"][0]/40, 2*self.Data["screen"]["size"][1]/20)) #40 and 20 if the number of lines and columns
+        self.rect = mineImage.get_rect(topleft = self.position) #40 and 20 if the number of lines and columns
         
     
-    def tick(self):
-        pass
+    def tick(self, screen):
+        
+        #generate the image
+        mineImage = pygame.image.load("textures/used/MINE_" + str(self.imageState) + ".png").convert_alpha()
+        mineImage = pygame.transform.scale(mineImage, (1*self.Data["screen"]["size"][0]/40, 1*self.Data["screen"]["size"][1]/20)) #40 and 20 if the number of lines and columns
+        self.rect = mineImage.get_rect(topleft = self.position) #40 and 20 if the number of lines and columns
+        
+        #draw the mine
+        screen.blit(mineImage, self.position)
+        

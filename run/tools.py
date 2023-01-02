@@ -142,12 +142,12 @@ def TerrainGen(Data):
         
         for mine in range(random.randint(0, 14)):
             case, line = 0, 0
-            while not terrain[line][case] == 0: case, line = random.randint(0, len(terrain[line])), random.randint(0, len(terrain))
+            while not terrain[line][case].__contains__("0") : case, line = random.randint(0, len(terrain[line])-1), random.randint(0, len(terrain)-1)
             positions["mines"].append((case*Data["screen"]["size"][0]/40, line*Data["screen"]["size"][1]/20))
             
         for flyer in range(random.randint(0, 4)):
             case, line = 0, 0
-            while not terrain[line][case] == 0: case, line = random.randint(0, len(terrain[line])), random.randint(0, len(terrain))
+            while not terrain[line][case].__contains__("0") : case, line = random.randint(0, len(terrain[line])-1), random.randint(0, len(terrain)-1)
             positions["flyers"].append((case*Data["screen"]["size"][0]/40, line*Data["screen"]["size"][1]/20))
             
 

@@ -251,6 +251,8 @@ class Game:
         else: #else do the game normal game tick
             screen.blit(self.toDrawTerrain, (0, 0))
             self.player.tick(screen, events, keys, self.collider)
+            for mine in self.mines:
+                mine.tick(screen)
             
             
     def __IGMenu(self, screen, events): #render the in-game menu 
