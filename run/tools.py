@@ -109,7 +109,7 @@ def TerrainGen(Data):
     positions = {
         "player" : (0, 0),
         "mines" : [],
-        "flyingThing" : []
+        "flyers" : []
     }
     find = False
     for terrainLine in range(20 + 1): #20 = number of lines
@@ -140,6 +140,17 @@ def TerrainGen(Data):
         if find:
             break
         
+        for mine in range(random.randint(0, 14)):
+            case, line = 0, 0
+            while not terrain[line][case] == 0: case, line = random.randint(0, len(terrain[line])), random.randint(0, len(terrain))
+            positions["mines"].append((case*Data["screen"]["size"][0]/40, line*Data["screen"]["size"][1]/20))
+            
+        for flyer in range(random.randint(0, 4)):
+            case, line = 0, 0
+            while not terrain[line][case] == 0: case, line = random.randint(0, len(terrain[line])), random.randint(0, len(terrain))
+            positions["flyers"].append((case*Data["screen"]["size"][0]/40, line*Data["screen"]["size"][1]/20))
+            
+
     return terrain, positions #return the generated terrain
     
 def DrawTerrain(screen, CodedTerrain, Data, saveFilePath=None): #TODO : implement the seed mechanism and the colliders

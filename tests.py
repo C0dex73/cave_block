@@ -1,11 +1,11 @@
-conditions = [
-    a == 1,
-    a == 2,
-    a == 56,
-    a == 59,
-]
-
-for condition in conditions:
-    if condition :
-        #thing
-        break
+def get_liste(x):
+    Liste = [
+        (x == 1),
+        (x == 2),
+        (x == 3),
+        (x == 4),
+        (x == 5),
+        (x == 6)
+    ]
+    
+    return Liste
