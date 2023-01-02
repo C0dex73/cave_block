@@ -1,5 +1,5 @@
 {
-  "devMode" : false,
+  "devMode" : true,
   "screen": {
     "size": [
       1280,
@@ -83,7 +83,30 @@
   },
   "entities" : {
       "player" : {
-        "speed" : 2
+        "speed" : 2,
+        "health" : 100,
+        "damage" : 0,
+        "power" : 60
+    },
+    "mine" : {
+      "genMin" : 1,
+      "genMax" : 15,
+      "health" : 1,
+      "damage" : 0
+    },
+    "flyer" : {
+      "genMin" : 1,
+      "genMax" : 10,
+      "health" : 25,
+      "damage" : 5,
+      "speed" : 3
+    },
+    "explosion" : {
+      "damage" : 15
+    },
+    "bullet" : {
+      "damage" : 10,
+      "speed" : 5
     }
   }
 }

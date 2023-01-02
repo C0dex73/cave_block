@@ -3,9 +3,9 @@ this is the main module that will be called when the user launch the game
 it call run folder
 it init pygame and the main loop
 """
-import pygame
 import json
-from run.scenes import *
+import pygame
+from run.scenes import Menu
 
 def main():
     """

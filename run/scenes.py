@@ -220,6 +220,7 @@ class Options: #to handle the option menu display
 class Game:
     def __init__(self, screen, Data, player=None, mines=None, flyers=None, igMenu=False): #called when initializing this class
         self.font = pygame.font.Font("textures/font.ttf", Rescaler(100, 0)) #set the font
+        self.HUDfont = pygame.font.Font("textures/HUDfont.ttf", Rescaler(75, 0)) #set the HUD font
         self.OptionText = self.font.render("Option", True, (250, 250, 250)) #set the text of the OptionButton
         self.MenuText = self.font.render("Menu", True, (250, 250, 250)) #set the text of the ExitButton
         self.Data = Data #set the data
@@ -237,6 +238,7 @@ class Game:
                 self.mines.append(Mine(screen, minePos, self.Data))
         else :
             self.mines = mines
+        self.explosions = []
         
         self.next = self #set next scene
         self.toDrawTerrain, self.collider = DrawTerrain(screen, self.terrain, self.Data) #set terrain image and collider
@@ -250,10 +252,22 @@ class Game:
             self.__IGMenu(screen, events) #render it
         else: #else do the game normal game tick
             screen.blit(self.toDrawTerrain, (0, 0))
-            self.player.tick(screen, events, keys, self.collider)
             for mine in self.mines:
                 mine.tick(screen)
+            self.player.tick(screen, events, keys, self.collider)
+            newListOfExplosions = []
+            for explosion in self.explosions:
+                newExplosion = explosion.tick(screen)
+                if not newExplosion == None : newListOfExplosions.append(newExplosion)
+            self.explosions = newListOfExplosions
             
+            self.mines, self.explosions, self.player = damage_collisions(screen, self.mines, self.player, None, self.explosions, None, self.Data)
+            
+            #HUD drawing
+            HUDtopLeftCorner = (Rescaler(50, 0), Rescaler(600, 1))
+            HUDtopLeftText = self.HUDfont.render(str(self.player.features["health"]) + " -" + str(self.player.features["power"]), True, (251,126,20))
+            HUDtopLeftText.set_alpha(40)
+            screen.blit(HUDtopLeftText, HUDtopLeftCorner)
             
     def __IGMenu(self, screen, events): #render the in-game menu 
         screen.blit(self.toDrawTerrain, (0, 0)) #render the background in first to set in background

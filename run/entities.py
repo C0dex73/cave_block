@@ -49,6 +49,7 @@ class Player():
         self.isCrouching = False
         self.oldIsCrouching = False
         
+        self.features = Data["entities"]["player"]
 
     def tick(self, screen, events, keys, terrainCollider):
 
@@ -118,7 +119,7 @@ class Player():
 
         #change the image of the player relatyvely to the time passed
         #every 1/10 second, we add 1/8 to the image state
-        #so 1/8 per 1/10 = 10 images avery 8 seconds
+        #so 1/8 per 1/10 = 10 images every 8 seconds
         if self.direction.x != 0 and time.time_ns()//10**8 % 10 != self.imageTimer: #^same calcul as line 11, and if it's different
             self.imageState += 0.125
             if self.imageState == 5 : self.imageState = 1 #if we overflowed (no file named astro_5)
@@ -127,27 +128,59 @@ class Player():
         self.oldIsCrouching = self.isCrouching #shift the value of isCrouching
         
 class Mine(pygame.sprite.Sprite):
-    
     def __init__(self, screen, position, Data):
+        pygame.sprite.Sprite.__init__(self) #initialize the sprite
         self.Data = Data
         self.imageState = 1
         #^same as line 11
         self.imageTimer = time.time_ns()//10**8 % 10
         self.position = position
         
-        #generate the image
-        mineImage = pygame.image.load("textures/used/MINE_" + str(self.imageState) + ".png").convert_alpha()
-        mineImage = pygame.transform.scale(mineImage, (1*self.Data["screen"]["size"][0]/40, 2*self.Data["screen"]["size"][1]/20)) #40 and 20 if the number of lines and columns
-        self.rect = mineImage.get_rect(topleft = self.position) #40 and 20 if the number of lines and columns
-        
+        self.features = self.Data["entities"]["mine"] #get all the mine features
     
     def tick(self, screen):
         
-        #generate the image
-        mineImage = pygame.image.load("textures/used/MINE_" + str(self.imageState) + ".png").convert_alpha()
+        #load the image
+        imagePath = "textures/used/MINE_" + str(math.floor(self.imageState)) + ".png"
+        mineImage = pygame.image.load(imagePath).convert_alpha()
         mineImage = pygame.transform.scale(mineImage, (1*self.Data["screen"]["size"][0]/40, 1*self.Data["screen"]["size"][1]/20)) #40 and 20 if the number of lines and columns
         self.rect = mineImage.get_rect(topleft = self.position) #40 and 20 if the number of lines and columns
         
-        #draw the mine
+        #change the image of the mine relatyvely to the time passed
+        #every 1/10 second, we add 1/8 to the image state
+        #so 1/16 per 1/10 = 10 images every 16 seconds
+        if time.time_ns()//10**8 % 10 != self.imageTimer: #^same calcul as line 11, and if it's different
+            self.imageState += 1/16
+            if self.imageState == 3: self.imageState = 1 #if we overflowed (no file named MINE_3)
+            
+        #draw the mine if it's alive, else draw the explosion
         screen.blit(mineImage, self.position)
+
+class Explosion(pygame.sprite.Sprite):
+    def __init__(self, screen, position, Data):
+        pygame.sprite.Sprite.__init__(self) #initialize the sprite
+        self.Data = Data
+        self.position = position
+        self.imageState = 1
+        #^same as line 11
+        self.imageTimer = time.time_ns()//10**8 % 10
         
+        self.features = Data["entities"]["explosion"]
+        
+    def tick(self, screen):
+        
+        #load the image
+        imagePath = "textures/used/explosion_" + str(math.floor(self.imageState)) + ".png"
+        explosionImage = pygame.image.load(imagePath).convert_alpha()
+        explosionImage = pygame.transform.scale(explosionImage, (2*self.Data["screen"]["size"][0]/40, 2*self.Data["screen"]["size"][1]/20)) #40 and 20 if the number of lines and columns
+        self.rect = explosionImage.get_rect(topleft = self.position) #40 and 20 if the number of lines and columns
+        
+        #change the image of the mine relatyvely to the time passed
+        #every 1/10 second, we add 1/8 to the image state
+        #so 1/3 per 1/10 = 10 images every 3 seconds
+        if time.time_ns()//10**8 % 10 != self.imageTimer: #^same calcul as line 11, and if it's different
+            self.imageState += 1/3
+            if self.imageState >= 6 : return None
+        
+        screen.blit(explosionImage, self.position)
+        return self

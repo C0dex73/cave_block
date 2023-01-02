@@ -1,11 +1,12 @@
-def get_liste(x):
-    Liste = [
-        (x == 1),
-        (x == 2),
-        (x == 3),
-        (x == 4),
-        (x == 5),
-        (x == 6)
+"""docstring"""
+def get_liste(Xvar):
+    """docstring"""
+    liste = [
+        (Xvar == 1),
+        (Xvar == 2),
+        (Xvar == 3),
+        (Xvar == 4),
+        (Xvar == 5),
+        (Xvar == 6)
     ]
-    
-    return Liste
+    return liste
