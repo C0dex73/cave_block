@@ -1,4 +1,5 @@
 import pygame
+import run.scenes as scenes
 from run.entities import *
 
 def damage_collisions(screen, mines, player, flyers, explosions, bullets, Data):
@@ -12,5 +13,12 @@ def damage_collisions(screen, mines, player, flyers, explosions, bullets, Data):
             
     return mines, explosions, player
 
-def useKeyPressed(screen, player, bullets, scene):
-    pass
+def useKeyPressed(screen, player, bullets, doorCollider, scene, Data):
+
+    
+    
+    if pygame.sprite.collide_rect(player, doorCollider):
+        print("e")
+        scene = scenes.Game(screen, Data, playerHealth=player.features["health"])
+    
+    return bullets, scene

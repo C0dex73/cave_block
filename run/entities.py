@@ -1,10 +1,17 @@
+"""
+entity hanlder module
+"""
 import pygame
 from run.tools import Rescaler
 import time
 import math
 
 class Player():
-    def __init__(self, screen, position, Data):
+    """
+    Player class that handles the health, position, movement and all the things related to the player
+    """
+    def __init__(self, screen, position, Data, health):
+        """intialize the player class"""
         self.Data = Data
         self.speed = Data["entities"]["player"]["speed"]
         self.imageState = 1
@@ -18,7 +25,7 @@ class Player():
         self.checkSprites = pygame.sprite.Group()
         
         #draw the image
-        playerImage = pygame.image.load("textures/used/Astro_" + str(self.imageState) + ".png").convert_alpha()
+        playerImage = pygame.image.load("assets/used/Astro_" + str(self.imageState) + ".png").convert_alpha()
         playerImage = pygame.transform.scale(playerImage, (1*self.Data["screen"]["size"][0]/40, 2*self.Data["screen"]["size"][1]/20)) #40 and 20 if the number of lines and columns
         self.rect = playerImage.get_rect(topleft = self.position) #40 and 20 if the number of lines and columns
         
@@ -50,8 +57,10 @@ class Player():
         self.oldIsCrouching = False
         
         self.features = Data["entities"]["player"]
+        self.features["health"] = health
 
     def tick(self, screen, events, keys, terrainCollider):
+        """called each game tick to modify player state"""
 
         #bool(Sprite()) will return True if the Sprite exists, we check if the 
         self.isGrounded = bool(pygame.sprite.spritecollideany(self.checkSprites.sprites()[0], terrainCollider))
@@ -76,7 +85,7 @@ class Player():
             self.checkSprites.sprites()[3].rect.centery = self.checkSprites.sprites()[0].rect.centery - 2 - self.Data["screen"]["size"][0]/40 #type: ignore (rect not static)
         
         #load the image
-        imagePath = "textures/used/Astro_" #constant file path
+        imagePath = "assets/used/Astro_" #constant file path
         imageSize = [1*self.Data["screen"]["size"][0]/40, 2*self.Data["screen"]["size"][1]/20] #40 and 20 if the number of lines and columns
         if self.isCrouching : 
             imagePath += "C" #add C to the path
@@ -127,9 +136,15 @@ class Player():
         screen.blit(playerImage, self.position)
         self.oldIsCrouching = self.isCrouching #shift the value of isCrouching
         
+    def setPos(self, pos):
+        """called to change the player position to the given one"""
+        self.position = pos
+        
 class Mine(pygame.sprite.Sprite):
+    """class to handle Mine object and all this features"""
+    
     def __init__(self, screen, position, Data):
-        pygame.sprite.Sprite.__init__(self) #initialize the sprite
+        """intialize mine class"""
         self.Data = Data
         self.imageState = 1
         #^same as line 11
@@ -139,9 +154,10 @@ class Mine(pygame.sprite.Sprite):
         self.features = self.Data["entities"]["mine"] #get all the mine features
     
     def tick(self, screen):
+        """called each game tick"""
         
         #load the image
-        imagePath = "textures/used/MINE_" + str(math.floor(self.imageState)) + ".png"
+        imagePath = "assets/used/MINE_" + str(math.floor(self.imageState)) + ".png"
         mineImage = pygame.image.load(imagePath).convert_alpha()
         mineImage = pygame.transform.scale(mineImage, (1*self.Data["screen"]["size"][0]/40, 1*self.Data["screen"]["size"][1]/20)) #40 and 20 if the number of lines and columns
         self.rect = mineImage.get_rect(topleft = self.position) #40 and 20 if the number of lines and columns
@@ -157,8 +173,10 @@ class Mine(pygame.sprite.Sprite):
         screen.blit(mineImage, self.position)
 
 class Explosion(pygame.sprite.Sprite):
+    """class to handle mine explosion effect"""
+    
     def __init__(self, screen, position, Data):
-        pygame.sprite.Sprite.__init__(self) #initialize the sprite
+        """initialize the class"""
         self.Data = Data
         self.position = position
         self.imageState = 1
@@ -168,9 +186,10 @@ class Explosion(pygame.sprite.Sprite):
         self.features = Data["entities"]["explosion"]
         
     def tick(self, screen):
+        """called each game tick"""
         
         #load the image
-        imagePath = "textures/used/explosion_" + str(math.floor(self.imageState)) + ".png"
+        imagePath = "assets/used/explosion_" + str(math.floor(self.imageState)) + ".png"
         explosionImage = pygame.image.load(imagePath).convert_alpha()
         explosionImage = pygame.transform.scale(explosionImage, (2*self.Data["screen"]["size"][0]/40, 2*self.Data["screen"]["size"][1]/20)) #40 and 20 if the number of lines and columns
         self.rect = explosionImage.get_rect(topleft = self.position) #40 and 20 if the number of lines and columns
@@ -184,3 +203,9 @@ class Explosion(pygame.sprite.Sprite):
         
         screen.blit(explosionImage, self.position)
         return self
+    
+class Bullet(pygame.sprite.Sprite):
+    def __init__(self, screen, position, direction):
+        self.position = position
+        self.direction = direction
+        self.image = 

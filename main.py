@@ -27,12 +27,13 @@ def main():
                 state = 0 #stop the main loop
 
         scene.tick(screen, events, keys) #do everything to do in the tick of the scene
-        if scene.next is None: #if we don't have any scene next
+        if scene.next == None: #if we don't have any scene next
             state = 0 #stop the main loop
         else :
             scene = scene.next #change to the next scene defined by the actual scene
         pygame.display.update() #update the screen
         clock.tick(60) #set the clock rate to 60 fps
+        
     pygame.quit() #stop the program
 
 #main program

@@ -11,10 +11,12 @@ def SetData(data, jsonFilePath):
     with open(jsonFilePath, 'w') as jsonFile:
         json.dump(data, jsonFile)
 
-def Rescaler(pos, axis):
+def Rescaler(pos, axis=-1):
     Data = json.load(open("data/app.json", "r"))
     actualResolution = Data["screen"]["size"]
     betaResolution = [1080, 720]
+    
+    if axis == -1 : axis = actualResolution.index(min(actualResolution))
     
     return round(actualResolution[axis] * pos / betaResolution[axis])
             
@@ -156,11 +158,12 @@ def TerrainGen(Data):
 def DrawTerrain(screen, CodedTerrain, Data, saveFilePath=None): #TODO : implement the seed mechanism and the colliders
     finalTerrainSurface = pygame.Surface(Data["screen"]["size"]) #* this work tho
     finalColliderSurface = pygame.sprite.Group()
+    doorColliderSurface = pygame.sprite.Sprite()
     if saveFilePath is not None:
         CodedTerrain = json.load(open(saveFilePath, 'r'))
         
     Decoder = Data["terrainDecoder"] #get the decoder data
-    imageList = os.listdir("textures/used") #get all the textures
+    imageList = os.listdir("assets/used") #get all the assets
     
     for line in range(len(CodedTerrain)):
         for case in range(len(CodedTerrain[line])): #for each block
@@ -175,8 +178,9 @@ def DrawTerrain(screen, CodedTerrain, Data, saveFilePath=None): #TODO : implemen
                 if blockCalc.__contains__("D"): size = [2, 2] #if it's a door, it's 2 times bigger
                 
                 #then print it
-                caseImage = pygame.image.load("textures/used/" + random.choice(finalImageList)).convert_alpha()
+                caseImage = pygame.image.load("assets/used/" + random.choice(finalImageList)).convert_alpha()
                 caseImage = pygame.transform.scale(caseImage, (size[0] * Data["screen"]["size"][0] / 40, size[1] * Data["screen"]["size"][1] / 20)) #40 = number of columns and 20 = number of rows
+                if blockCalc.__contains__("DF"): doorColliderSurface.rect = caseImage.get_rect(topleft=(case*Data["screen"]["size"][0]/40, line*Data["screen"]["size"][1]/20))
                 finalTerrainSurface.blit(caseImage, (case*Data["screen"]["size"][0]/40, line*Data["screen"]["size"][1]/20)) #40 = number of columns and 20 = number of rows
 
                 #and finally set the collider logic
@@ -186,4 +190,4 @@ def DrawTerrain(screen, CodedTerrain, Data, saveFilePath=None): #TODO : implemen
                     finalColliderSurface.add(blockSprite) # type: ignore
                     
                     
-    return finalTerrainSurface, finalColliderSurface
+    return finalTerrainSurface, finalColliderSurface, doorColliderSurface

@@ -7,7 +7,7 @@ class Menu: #to handle the menu display
     def __init__(self, screen, Data): #called while initializing the class
         self.Data = Data
         self.next = self #set the next scene to itself
-        self.font = pygame.font.Font("textures/font.ttf", Rescaler(100, 0)) #set the font
+        self.font = pygame.font.Font("assets/font.ttf", Rescaler(125)) #set the font
 
         #parts of tick function to avoid errors with self call
         self.ExitText = self.font.render("Exit", True, (250, 250, 250)) #set the text of the ExitButton
@@ -19,7 +19,7 @@ class Menu: #to handle the menu display
     def tick(self, screen, events, keys): #called every active tick
         self.Data = GetData("data/app.json") #actualize the data
         #background image
-        self.bg = pygame.image.load("textures/test.png").convert() #load the bg menu image #TODO : use the real path
+        self.bg = pygame.image.load("assets/test.png").convert() #load the bg menu image #TODO : use the real path
         self.bg = pygame.transform.scale(self.bg, self.Data["screen"]["size"]) #rescale the image to the size of the screen
         screen.blit(self.bg, (0, 0)) #print the image on the screen
         
@@ -63,8 +63,8 @@ class Options: #to handle the option menu display
         self.returnScene = returnScene #save the scene to call at the end of the option scene
         self.Data = Data #save Data
         self.next = self #set the next scene to itself
-        self.font1 = pygame.font.Font("textures/font.ttf", Rescaler(100, 0)) #set the fonts
-        self.font2 = pygame.font.Font("textures/font2.ttf", Rescaler(25, 0))
+        self.font1 = pygame.font.Font("assets/font.ttf", Rescaler(125)) #set the fonts
+        self.font2 = pygame.font.Font("assets/font2.ttf", Rescaler(25))
 
         #parts of tick function to avoid errors with self call
         self.returnText = self.font1.render("Return", True, (250, 250, 250)) #set the text of the ExitButton
@@ -72,7 +72,7 @@ class Options: #to handle the option menu display
     def tick(self, screen, events, keys): #called every active tick
         self.Data = GetData("data/app.json") #actualize the data
         #background image
-        self.bg = pygame.image.load("textures/used/bigdoor23.png").convert() #load the bg option image #TODO : replace this with the real path
+        self.bg = pygame.image.load("assets/used/bigdoor23.png").convert() #load the bg option image #TODO : replace this with the real path
         self.bg = pygame.transform.scale(self.bg, self.Data["screen"]["size"]) #rescale the image to the size of the screen
         screen.blit(self.bg, (0, 0)) #print the image on the screen
 
@@ -218,9 +218,9 @@ class Options: #to handle the option menu display
 
 
 class Game:
-    def __init__(self, screen, Data, player=None, mines=None, flyers=None, igMenu=False): #called when initializing this class
-        self.font = pygame.font.Font("textures/font.ttf", Rescaler(100, 0)) #set the font
-        self.HUDfont = pygame.font.Font("textures/HUDfont.ttf", Rescaler(75, 0)) #set the HUD font
+    def __init__(self, screen, Data, player=None, mines=None, flyers=None, igMenu=False, playerHealth=100): #called when initializing this class
+        self.font = pygame.font.Font("assets/font.ttf", Rescaler(100)) #set the font
+        self.HUDfont = pygame.font.Font("assets/HUDfont.ttf", Rescaler(75, 0)) #set the HUD font
         self.OptionText = self.font.render("Option", True, (250, 250, 250)) #set the text of the OptionButton
         self.MenuText = self.font.render("Menu", True, (250, 250, 250)) #set the text of the ExitButton
         self.Data = Data #set the data
@@ -228,10 +228,9 @@ class Game:
         #entities
         self.terrain, self.positions = TerrainGen(self.Data) #generate the coded terrain and the positions of the entities
         if player == None:
-            self.player = Player(screen, self.positions["player"], self.Data)
+            self.player = Player(screen, self.positions["player"], self.Data, playerHealth)
         else :
             self.player = player
-            
         if mines == None:
             self.mines = []
             for minePos in self.positions["mines"]:
@@ -239,16 +238,21 @@ class Game:
         else :
             self.mines = mines
         self.explosions = []
+        self.bullets = []
         
         self.next = self #set next scene
-        self.toDrawTerrain, self.collider = DrawTerrain(screen, self.terrain, self.Data) #set terrain image and collider
+        self.toDrawTerrain, self.collider, self.doorCollider = DrawTerrain(screen, self.terrain, self.Data) #set terrain image and collider
         self.inGameMenu = igMenu #set toggleable var for in-game menu
+        self.GO = False
         
     def tick(self, screen, events, keys):
         self.Data = GetData("data/app.json") #actualize the data
         #if the user press the igMenu key then toggle the menu interface
+        if self.player.features["health"] <= 0: self.GO = True #make the game over
         if keys[eval("pygame.K_" + self.Data["inputs"]["igMenu"])] and testEvent([pygame.KEYDOWN], events): self.inGameMenu = not self.inGameMenu
-        if self.inGameMenu: #if the user is on the igMenu
+        if self.GO:
+            self.Game_Over(screen, events)
+        elif self.inGameMenu: #if the user is on the igMenu
             self.__IGMenu(screen, events) #render it
         else: #else do the game normal game tick
             screen.blit(self.toDrawTerrain, (0, 0))
@@ -262,12 +266,16 @@ class Game:
             self.explosions = newListOfExplosions
             
             self.mines, self.explosions, self.player = damage_collisions(screen, self.mines, self.player, None, self.explosions, None, self.Data)
+            if keys[eval("pygame.K_" + self.Data["inputs"]["use"])] :
+                self.bullets, self.next = useKeyPressed(screen, self.player, self.bullets, self.doorCollider, self, self.Data)
             
             #HUD drawing
             HUDtopLeftCorner = (Rescaler(50, 0), Rescaler(600, 1))
             HUDtopLeftText = self.HUDfont.render(str(self.player.features["health"]) + " -" + str(self.player.features["power"]), True, (251,126,20))
             HUDtopLeftText.set_alpha(40)
             screen.blit(HUDtopLeftText, HUDtopLeftCorner)
+            
+            
             
     def __IGMenu(self, screen, events): #render the in-game menu 
         screen.blit(self.toDrawTerrain, (0, 0)) #render the background in first to set in background
@@ -300,3 +308,45 @@ class Game:
         igMenuSurface.blit(self.MenuText, menuButtonTLCorner) #render the text
         
         screen.blit(igMenuSurface, (0, 0))
+
+    def Game_Over(self, screen, events):
+        screen.blit(self.toDrawTerrain, (0, 0)) #render the background in first to set in background
+        GameOverSurface = pygame.Surface(self.Data["screen"]["size"], pygame.SRCALPHA).convert_alpha()
+        
+        GameOverFilter = pygame.Surface(self.Data["screen"]["size"])
+        GameOverFilter.set_alpha(128)
+        GameOverFilter.fill((75, 75, 75))
+        GameOverSurface.blit(GameOverFilter.convert_alpha(), (0, 0))
+        
+        GameOverText = self.font.render("GAME OVER", True, (250, 5, 5))
+        GameOverSurface.blit(GameOverText.convert_alpha(), (Rescaler(35, 1), Rescaler(250, 0)))
+        
+        screen.blit(GameOverSurface, (0, 0))
+        pygame.display.update()
+        
+        time.sleep(5)
+        
+        screen.blit(self.toDrawTerrain, (0, 0)) #render the background in first to set in background
+        GameOverSurface = pygame.Surface(self.Data["screen"]["size"], pygame.SRCALPHA).convert_alpha()
+        
+        GameOverFilter = pygame.Surface(self.Data["screen"]["size"])
+        GameOverFilter.set_alpha(128)
+        GameOverFilter.fill((75, 75, 75))
+        GameOverSurface.blit(GameOverFilter.convert_alpha(), (0, 0))
+        
+        GameOverText = self.font.render("GAME OVER", True, (250, 5, 5))
+        GameOverSurface.blit(GameOverText.convert_alpha(), (Rescaler(35, 1), Rescaler(250, 0)))
+        
+        GameOverIndicTextFont = pygame.font.Font("assets/font2.ttf", Rescaler(20))
+        GameOverIndicText = GameOverIndicTextFont.render("press any key to continue", True, (255, 255, 255))
+        GameOverSurface.blit(GameOverIndicText, (Rescaler(600, 1), Rescaler(10, 0)))
+        
+        screen.blit(GameOverSurface, (0, 0))
+        pygame.display.update()
+        
+        GO = True
+        while GO:
+            for event in pygame.event.get():
+                if event.type == pygame.KEYDOWN: GO = False
+                
+        self.next = Menu(screen, self.Data)

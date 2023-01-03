@@ -15,7 +15,7 @@ white = (255,255,255)
 
 clock = pygame.time.Clock()
 crashed = False
-carImg = pygame.image.load("cave_block/textures/test.png")
+carImg = pygame.image.load("cave_block/assets/test.png")
 
 def car(x,y):
     gameDisplay.blit(carImg, (x,y))
