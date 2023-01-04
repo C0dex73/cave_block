@@ -23,7 +23,7 @@ class Menu: #to handle the menu display
     def tick(self, screen, events, keys): #called every active tick
         self.Data = GetData("data/app.json") #actualize the data
         #background image
-        self.bg = pygame.image.load("assets/test.png").convert() #load the bg menu image #TODO : use the real path
+        self.bg = pygame.image.load("assets/used/menu.png").convert() #load the bg menu image #TODO : use the real path
         self.bg = pygame.transform.scale(self.bg, self.Data["screen"]["size"]) #rescale the image to the size of the screen
         screen.blit(self.bg, (0, 0)) #print the image on the screen
         
@@ -50,7 +50,7 @@ class Menu: #to handle the menu display
         screen.blit(self.OptionText, optionButtonTLCorner) #render the text
 
         #NEW GAME button
-        newGameButtonTLCorner = (Rescaler(50, 0), Rescaler(300, 1)) #set the topleft corner of the button
+        newGameButtonTLCorner = (Rescaler(50, 0), Rescaler(400, 1)) #set the topleft corner of the button
         self.newGameButtonSurface = self.newGameText.get_rect(topleft=newGameButtonTLCorner) #get the whole text surface
         if self.newGameButtonSurface.collidepoint(pygame.mouse.get_pos()[0], pygame.mouse.get_pos()[1]): #if the mouse hoover the text
             self.newGameText = self.font.render("New Game", True, (250, 250, 250)) #make it lighter
