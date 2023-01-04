@@ -1,14 +1,18 @@
 import pygame
+import time
 import run.scenes as scenes
 from run.entities import *
 from run.tools import Rescaler
 
-def damage_collisions(screen, mines, player, flyers, explosions, bullets, Data):
+def damage_collisions(screen, mines, player, flyers, explosions, bullets, Data, oldTime, score):
     
+    playerCollideCheck = False
+    if oldTime + 2 < time.time(): playerCollideCheck = True
     
     for mine in mines:
-        if pygame.sprite.collide_rect(player, mine):
-            mine.features["health"] = 0
+        if pygame.sprite.collide_rect(player, mine) and playerCollideCheck:
+            oldTime = time.time()
+            mine.features["health"] -= player.features["damage"]
             newExplosion = Explosion(screen, (mine.position[0]-0.5*Data["screen"]["size"][0]/40, mine.position[1]-0.5*Data["screen"]["size"][1]/20), Data)
             explosions.extend([newExplosion])
             damageSound = pygame.mixer.Sound("assets/sounds/OOF.ogg")
@@ -17,26 +21,63 @@ def damage_collisions(screen, mines, player, flyers, explosions, bullets, Data):
             explosionSound = pygame.mixer.Sound("assets/sounds/Boom.ogg")
             explosionSound.set_volume(Data["volume"])
             explosionSound.play()
-            player.features["health"] -= newExplosion.features["damage"]
-            mines.remove(mine)
+            player.features["health"] -= mine.features["damage"]
             
         for bullet in bullets:
-            if pygame.sprite.collide_rect(mine, bullet):
-                mine.features["health"] = 0
+            if pygame.sprite.collide_rect(mine, bullet) and not bullet.enemy:
+                mine.features["health"] -= bullet.features["damage"]
                 newExplosion = Explosion(screen, (mine.position[0]-0.5*Data["screen"]["size"][0]/40, mine.position[1]-0.5*Data["screen"]["size"][1]/20), Data)
                 explosions.extend([newExplosion])
                 explosionSound = pygame.mixer.Sound("assets/sounds/Boom.ogg")
                 explosionSound.set_volume(Data["volume"])
                 explosionSound.play()
-                mines.remove(mine)
                 
                 bullets.remove(bullet)
+                score += 5
+                
+    for flyer in flyers:
+        if pygame.sprite.collide_rect(player, flyer) and playerCollideCheck:
+            oldTime = time.time()
+            flyer.features["health"] -= player.features["damage"]
+            newExplosion = Explosion(screen, (flyer.position[0]-0.5*Data["screen"]["size"][0]/40, flyer.position[1]-0.5*Data["screen"]["size"][1]/20), Data)
+            explosions.extend([newExplosion])
+            damageSound = pygame.mixer.Sound("assets/sounds/OOF.ogg")
+            damageSound.set_volume(Data["volume"])
+            damageSound.play()
+            explosionSound = pygame.mixer.Sound("assets/sounds/Boom.ogg")
+            explosionSound.set_volume(Data["volume"])
+            explosionSound.play()
+            player.features["health"] -= flyer.features["damage"]
             
-    return mines, explosions, player, bullets, flyers
+        for bullet in bullets:
+            if pygame.sprite.collide_rect(flyer, bullet) and not bullet.enemy:
+                flyer.features["health"] -= bullet.features["damage"]
+                newExplosion = Explosion(screen, (flyer.position[0]-0.5*Data["screen"]["size"][0]/40, flyer.position[1]-0.5*Data["screen"]["size"][1]/20), Data)
+                explosions.extend([newExplosion])
+                explosionSound = pygame.mixer.Sound("assets/sounds/Boom.ogg")
+                explosionSound.set_volume(Data["volume"])
+                explosionSound.play()
+                
+                bullets.remove(bullet)
+                score += 5
+                
+    for bullet in bullets:
+        if pygame.sprite.collide_rect(bullet, player) and bullet.enemy:
+            player.features["health"] -= bullet.features["damage"]
+            newExplosion = Explosion(screen, (player.position[0]-0.5*Data["screen"]["size"][0]/40, player.position[1]-0.5*Data["screen"]["size"][1]/20), Data)
+            explosions.extend([newExplosion])
+            explosionSound = pygame.mixer.Sound("assets/sounds/Boom.ogg")
+            explosionSound.set_volume(Data["volume"])
+            explosionSound.play()
+            
+            bullets.remove(bullet)
+            score -= 5
+        
+    return mines, explosions, player, bullets, flyers, oldTime, score
 
 def useKeyPressed(screen, scene):    
     if pygame.sprite.collide_rect(scene.player, scene.doorCollider):
-        scene = scenes.Game(screen, scene.Data, timer=-1, playerHealth=scene.player.features["health"])
+        scene = scenes.Game(screen, scene.Data, timer=-1, playerHealth=scene.player.features["health"], score=scene.score + 100)
     
     return scene
 

@@ -2,11 +2,11 @@
 entity hanlder module
 """
 import pygame
-from run.tools import Rescaler
+from run.tools import *
 import time
 import math
 
-class Player():
+class Player(pygame.sprite.Sprite):
     """
     Player class that handles the health, position, movement and all the things related to the player
     """
@@ -61,7 +61,13 @@ class Player():
 
     def tick(self, screen, events, keys, terrainCollider):
         """called each game tick to modify player state"""
+        #actualize the Data
+        self.Data = GetData("data/app.json")
+        
+        #reset health if is in devmode
+        if self.Data["devMode"] : self.features["health"] = 100 ; self.features["power"] = 60
 
+        if self.features["health"] < 0 : self.features["health"] = 0
         #bool(Sprite()) will return True if the Sprite exists, we check if the 
         self.isGrounded = bool(pygame.sprite.spritecollideany(self.checkSprites.sprites()[0], terrainCollider))
         self.isCrouching = keys[eval("pygame.K_" + self.Data["inputs"]["crouch"])]
@@ -69,7 +75,7 @@ class Player():
         if self.isCrouching == False and self.oldIsCrouching == True and pygame.sprite.spritecollideany(self.checkSprites.sprites()[1], terrainCollider): self.isCrouching = True
         
         #gravity
-        if not self.isGrounded : self.direction.y += 0.1
+        if not self.isGrounded : self.direction.y += self.Data["gravity"]
         
         #toggle between crouch and normal position for the colliders
         if self.isCrouching :
@@ -156,7 +162,10 @@ class Mine(pygame.sprite.Sprite):
     
     def tick(self, screen):
         """called each game tick"""
+        #actualize the Data
+        self.Data = GetData("data/app.json")
         
+        if self.features["health"] < 0 : return None
         #load the image
         imagePath = "assets/used/MINE_" + str(math.floor(self.imageState)) + ".png"
         mineImage = pygame.image.load(imagePath).convert_alpha()
@@ -172,6 +181,7 @@ class Mine(pygame.sprite.Sprite):
             
         #draw the mine if it's alive, else draw the explosion
         screen.blit(mineImage, self.position)
+        return self
 
 class Explosion(pygame.sprite.Sprite):
     """class to handle mine explosion effect"""
@@ -188,6 +198,8 @@ class Explosion(pygame.sprite.Sprite):
         
     def tick(self, screen):
         """called each game tick"""
+        #actualize the Data
+        self.Data = GetData("data/app.json")
         
         #load the image
         imagePath = "assets/used/explosion_" + str(math.floor(self.imageState)) + ".png"
@@ -209,19 +221,21 @@ class Bullet(pygame.sprite.Sprite):
     def __init__(self, position, direction, Data, Enemy=False):
         self.position = position
         self.enemy = Enemy
-        self.direction = direction
         self.image = pygame.image.load("assets/used/laser.png").convert_alpha()
         self.image = pygame.transform.scale(self.image, (Rescaler(40, 0), Rescaler(20, 1)))
         self.rect = self.image.get_rect(topleft=self.position)
         self.features = Data["entities"]["bullet"].copy()
+        self.direction = pygame.math.Vector2(direction, 0)
         
     def tick(self, screen, terrainCollider):
+        #actualize the Data
+        self.Data = GetData("data/app.json")
         if pygame.sprite.spritecollideany(self, terrainCollider): return None
         else: 
             screen.blit(self.image, self.position)
             self.rect.topleft = self.position #type: ignore (rect not static)
             
-            self.position = (self.direction * self.features["speed"] + self.position[0], self.position[1])
+            self.position = (self.direction.x * self.features["speed"] + self.position[0], self.position[1])
             
             return self
         
@@ -235,11 +249,16 @@ class Flyer(pygame.sprite.Sprite):
         #^same as line 11
         self.imageTimer = time.time_ns()//10**8 % 10
         self.position = position
+        self.direction = pygame.math.Vector2(0, 0)
+        self.shootCoolDown = 0
         
         self.features = self.Data["entities"]["flyer"].copy() #get all the mine features
     
-    def tick(self, screen, player, bullets):
+    def tick(self, screen, player, bullets, terrainCollider):
         """called each game tick"""
+        #actualize the Data
+        self.Data = GetData("data/app.json")
+        if self.features["health"] <= 0 : return None, bullets
         #load the image
         imagePath = "assets/used/FLYER_" + str(math.floor(self.imageState)) + ".png"
         flyerImage = pygame.image.load(imagePath).convert_alpha()
@@ -253,7 +272,18 @@ class Flyer(pygame.sprite.Sprite):
             self.imageState += 1/2
             if self.imageState == 5: self.imageState = 1 #if we overflowed (no file named MINE_3)
             
-        if player.position[1] < self.position[1] : flyerImage = pygame.transform.flip(flyerImage, True, False)
-            
+        if player.position[0] < self.position[0] : flyerImage = pygame.transform.flip(flyerImage, True, False)
+        
+        if self.shootCoolDown + 2 < time.time():
+            if player.position[0] < self.position[0] :
+                newBullet = Bullet(self.rect.center, -1, self.Data, Enemy=True)
+            else:
+                newBullet = Bullet(self.rect.center, 1, self.Data, Enemy=True)
+            bullets.append(newBullet)
+            self.shootCoolDown = time.time()
+                
+        self.position += self.features["speed"]*self.direction
+        
         #draw the mine if it's alive, else draw the explosion
         screen.blit(flyerImage, self.position)
+        return self, bullets

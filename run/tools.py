@@ -3,15 +3,39 @@ import random
 import pygame
 import os
 
-def GetData(jsonFilePath):
+def GetData(jsonFilePath:str) -> dict:
+    """
+    take the data from a json file and return it as a dictionary
+    
+    jsonFilePath (string) : the path of the json file
+    
+    return : Data(dictionary)
+    """
     with open(jsonFilePath, 'r') as jsonFile:
         return json.load(jsonFile)
     
-def SetData(data, jsonFilePath):
+def SetData(data:dict, jsonFilePath:str) -> None: #! NOT USED FOR NOW
+    """
+    Write a dictionary into a json file
+    
+    jsonFilePath : the path of the json file
+    
+    return : Nothing
+    """
     with open(jsonFilePath, 'w') as jsonFile:
         json.dump(data, jsonFile)
 
-def Rescaler(pos, axis=-1):
+def Rescaler(pos:float, axis:int=-1):
+    """Used many times to calculate the coordinates of an object
+    relatively to the current coordinate and the current screen size.
+    - process only one value of a position at time !
+
+    Args:
+        pos (float): the current position before calculating the new ones
+        axis (int, optional): the axis of the value (default -1=take the smallest change)
+    Returns:
+        _type_: _description_
+    """
     Data = json.load(open("data/app.json", "r"))
     actualResolution = Data["screen"]["size"].copy()
     betaResolution = [1080, 720]
@@ -34,7 +58,16 @@ def testEvent(Tevents, Revents):
         returnVar.append({str(event) : False})
     return returnVar
 
-def TerrainGen(Data):
+def TerrainGen(Data:dict):
+    """generate the terrain in strings representing cases (blocks), can be decoded in app.json["terrainDecoder"]
+
+    Args:
+        Data (dict): the app data contained in data/app.json
+
+    Returns:
+        terrain (list[list[str]]): the coded terrain
+        position (dict) : the position of the entities and the doors
+    """
     #code the terrain by block with symbols
     #differents calcs is represented by differents symbols
     #there can be multiple calcs with a transparent background for example
@@ -127,14 +160,17 @@ def TerrainGen(Data):
                 break
         if find:
             break
+        
+        
     find = False
+    Oplateform = [(0, 0), (0, 0)] #the original plateform coodinates
     for terrainCase in range(10):
         case = 40 - terrainCase -2 #40 = number of columns
         for terrainLine in range(20 + 1): #20 = number of lines
             line = 20 - terrainLine -2 #20 = number of lines
             if terrain[line][case].__contains__("0") and terrain[line+1][case].__contains__("0") and terrain[line][case+1].__contains__("0") and terrain[line+1][case+1].__contains__("0"):
                 find = True
-                terrain[line][case] = theme + "DF"
+                terrain[line][case] = theme + "FD"
                 terrain[line+1][case] = "A"
                 terrain[line+1][case+1] = "A"
                 terrain[line][case+1] = "A"
@@ -180,7 +216,7 @@ def DrawTerrain(screen, CodedTerrain, Data, saveFilePath=None): #TODO : implemen
                 #then print it
                 caseImage = pygame.image.load("assets/used/" + random.choice(finalImageList)).convert_alpha()
                 caseImage = pygame.transform.scale(caseImage, (size[0] * Data["screen"]["size"][0] / 40, size[1] * Data["screen"]["size"][1] / 20)) #40 = number of columns and 20 = number of rows
-                if blockCalc.__contains__("DF"): doorColliderSurface.rect = caseImage.get_rect(topleft=(case*Data["screen"]["size"][0]/40, line*Data["screen"]["size"][1]/20))
+                if blockCalc.__contains__("FD"): doorColliderSurface.rect = caseImage.get_rect(topleft=(case*Data["screen"]["size"][0]/40, line*Data["screen"]["size"][1]/20))
                 finalTerrainSurface.blit(caseImage, (case*Data["screen"]["size"][0]/40, line*Data["screen"]["size"][1]/20)) #40 = number of columns and 20 = number of rows
 
                 #and finally set the collider logic
