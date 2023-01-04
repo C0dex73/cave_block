@@ -34,7 +34,16 @@ def testEvent(Tevents, Revents):
         returnVar.append({str(event) : False})
     return returnVar
 
-def TerrainGen(Data):
+def TerrainGen(Data:dict):
+    """generate the terrain in strings representing cases (blocks), can be decoded in app.json["terrainDecoder"]
+
+    Args:
+        Data (dict): the app data contained in data/app.json
+
+    Returns:
+        terrain (list[list[str]]): the coded terrain
+        position (dict) : the position of the entities and the doors
+    """
     #code the terrain by block with symbols
     #differents calcs is represented by differents symbols
     #there can be multiple calcs with a transparent background for example
@@ -141,6 +150,8 @@ def TerrainGen(Data):
                 break
         if find:
             break
+        
+        
         
     for mine in range(random.randint(Data["entities"]["mine"]["genMin"], Data["entities"]["mine"]["genMax"])-1):
         case, line = 0, 0

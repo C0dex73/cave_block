@@ -62,6 +62,7 @@ class Player():
     def tick(self, screen, events, keys, terrainCollider):
         """called each game tick to modify player state"""
 
+        if self.features["health"] < 0 : self.features["health"] = 0
         #bool(Sprite()) will return True if the Sprite exists, we check if the 
         self.isGrounded = bool(pygame.sprite.spritecollideany(self.checkSprites.sprites()[0], terrainCollider))
         self.isCrouching = keys[eval("pygame.K_" + self.Data["inputs"]["crouch"])]
@@ -157,6 +158,7 @@ class Mine(pygame.sprite.Sprite):
     def tick(self, screen):
         """called each game tick"""
         
+        if self.features["health"] < 0 : return None
         #load the image
         imagePath = "assets/used/MINE_" + str(math.floor(self.imageState)) + ".png"
         mineImage = pygame.image.load(imagePath).convert_alpha()
@@ -172,6 +174,7 @@ class Mine(pygame.sprite.Sprite):
             
         #draw the mine if it's alive, else draw the explosion
         screen.blit(mineImage, self.position)
+        return self
 
 class Explosion(pygame.sprite.Sprite):
     """class to handle mine explosion effect"""
@@ -240,6 +243,7 @@ class Flyer(pygame.sprite.Sprite):
     
     def tick(self, screen, player, bullets):
         """called each game tick"""
+        if self.features["health"] <= 0 : return None
         #load the image
         imagePath = "assets/used/FLYER_" + str(math.floor(self.imageState)) + ".png"
         flyerImage = pygame.image.load(imagePath).convert_alpha()
@@ -257,3 +261,4 @@ class Flyer(pygame.sprite.Sprite):
             
         #draw the mine if it's alive, else draw the explosion
         screen.blit(flyerImage, self.position)
+        return self

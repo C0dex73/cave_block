@@ -1,6 +1,6 @@
 {
   "devMode" : false,
-  "volume" : 0.2,
+  "volume" : 0,
   "screen": {
     "size": [
       1280,
@@ -86,14 +86,14 @@
       "player" : {
         "speed" : 2,
         "health" : 100,
-        "damage" : 0,
+        "damage" : 5,
         "power" : 60
     },
     "mine" : {
       "genMin" : 1,
       "genMax" : 15,
       "health" : 1,
-      "damage" : 0
+      "damage" : 15
     },
     "flyer" : {
       "genMin" : 1,
@@ -103,7 +103,7 @@
       "speed" : 3
     },
     "explosion" : {
-      "damage" : 15
+      "damage" : 0
     },
     "bullet" : {
       "damage" : 10,

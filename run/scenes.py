@@ -1,10 +1,24 @@
+"""
+scenes.py is the module where all the scenes like menu, options or the game in itself are stored
+it contains classes that represent the scenes and each class has its own tick function
+"""
 from run.tools import *
 from run.entities import *
 from run.interactions import *
 import pygame
 
-class Menu: #to handle the menu display
+class Menu: 
+    """
+    handle menu displaying and processing
+    """
     def __init__(self, screen, Data, timer=0.00): #called while initializing the class
+        """
+        initialize the class
+        
+        screen : the screen ti display the menu
+        Data : the app data (data/app.json file)
+        timer : the time  where to start for music
+        """
         self.Data = Data.copy()
         self.next = self #set the next scene to itself
         self.font = pygame.font.Font("assets/font.ttf", Rescaler(125)) #set the font
@@ -255,6 +269,7 @@ class Game:
         self.toDrawTerrain, self.collider, self.doorCollider = DrawTerrain(screen, self.terrain, self.Data) #set terrain image and collider
         self.inGameMenu = igMenu #set toggleable var for in-game menu
         self.GO = False
+        self.playerCollisionCooldown = 0
         self.timer = timer
         
         if timer != -1:
@@ -263,7 +278,16 @@ class Game:
             pygame.mixer.music.load("assets/sounds/ambient.ogg")
             pygame.mixer.music.play(-1, self.timer, 500)
         
-    def tick(self, screen, events, keys):
+    def tick(self, screen:pygame.surface.Surface, events:list[pygame.event.Event], keys) -> None:
+        """
+        tick fucntion will be called every tick of the game
+        
+        screen : the screen where we have to render everything
+        events : the list of pygame events, same as pygame.event.get()
+        keys : list of pressed keys
+        
+        return Nothing
+        """
         #if the user press the igMenu key then toggle the menu interface
         if self.player.features["health"] <= 0: self.GO = True #make the game over
         if keys[eval("pygame.K_" + self.Data["inputs"]["igMenu"])] and self.inGameMenu and testEvent([pygame.KEYDOWN], events):
@@ -278,32 +302,58 @@ class Game:
             pygame.mixer.music.load("assets/sounds/menu.ogg")
             pygame.mixer.music.play(-1)
         if keys[eval("pygame.K_" + self.Data["inputs"]["igMenu"])] and testEvent([pygame.KEYDOWN], events): self.inGameMenu = not self.inGameMenu
+        
+        #if its game over then do game over outro loop
         if self.GO:
             self.Game_Over(screen, events)
+        
         elif self.inGameMenu: #if the user is on the igMenu
             self.__IGMenu(screen, events) #render it
+        
         else: #else do the game normal game tick
-            screen.blit(self.toDrawTerrain, (0, 0))
+            screen.blit(self.toDrawTerrain, (0, 0)) #blit the terrain first in bg
+            
+            #do mines tick and update their state
+            newListOfMines = []
             for mine in self.mines:
-                mine.tick(screen)
+                newMine = mine.tick(screen)
+                if not newMine == None : newListOfMines.append(newMine)
+            
+             #do flyers tick and update their state
+            newListOfFlyers = []
             for flyer in self.flyers:
-                flyer.tick(screen, self.player, self.bullets)
-            self.player.tick(screen, events, keys, self.collider)
+                newFlyer = flyer.tick(screen, self.player, self.bullets)
+                if not newFlyer == None : newListOfFlyers.append(newFlyer)
+            
+            
+             #do explosions tick and update their state
             newListOfExplosions = []
             for explosion in self.explosions:
                 newExplosion = explosion.tick(screen)
                 if not newExplosion == None : newListOfExplosions.append(newExplosion)
-            self.explosions = newListOfExplosions
+            
+             #do bullets tick and update their state
             newListOfBBullets = []
             for bullet in self.bullets:
                 newBullet = bullet.tick(screen, self.collider)
                 if not newBullet == None : newListOfBBullets.append(newBullet)
+            
+            #update entities
+            self.player.tick(screen, events, keys, self.collider)
             self.bullets = newListOfBBullets
-            self.mines, self.explosions, self.player, self.bullets, self.flyers = damage_collisions(screen, self.mines, self.player, self.flyers, self.explosions, self.bullets, self.Data)
+            self.explosions = newListOfExplosions
+            self.mines = newListOfMines
+            self.flyers = newListOfFlyers
+            self.mines, self.explosions, self.player, self.bullets, self.flyers, self.playerCollisionCooldown = damage_collisions(screen, self.mines, self.player, self.flyers, self.explosions, self.bullets, self.Data, self.playerCollisionCooldown)
+            
+            #do use tick (take the doors) if the needed button is pressed
             if keys[eval("pygame.K_" + self.Data["inputs"]["use"])] :
                 self.next = useKeyPressed(screen, self)
+            
+            #same with shoot tick
             if keys[eval("pygame.K_" + self.Data["inputs"]["shoot"])] and testEvent([pygame.KEYDOWN], events):
                 shootKeyPressed(screen, self, keys)
+            
             #HUD drawing
             HUDtopLeftCorner = (Rescaler(50, 0), Rescaler(600, 1))
             HUDtopLeftText = self.HUDfont.render(str(self.player.features["health"]) + " -" + str(self.player.features["power"]), True, (251,126,20))
