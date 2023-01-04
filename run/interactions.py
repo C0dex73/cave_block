@@ -4,6 +4,8 @@ from run.entities import *
 from run.tools import Rescaler
 
 def damage_collisions(screen, mines, player, flyers, explosions, bullets, Data):
+    
+    
     for mine in mines:
         if pygame.sprite.collide_rect(player, mine):
             mine.features["health"] = 0
@@ -12,7 +14,16 @@ def damage_collisions(screen, mines, player, flyers, explosions, bullets, Data):
             player.features["health"] -= newExplosion.features["damage"]
             mines.remove(mine)
             
-    return mines, explosions, player
+        for bullet in bullets:
+            if pygame.sprite.collide_rect(mine, bullet):
+                mine.features["health"] = 0
+                newExplosion = Explosion(screen, (mine.position[0]-0.5*Data["screen"]["size"][0]/40, mine.position[1]-0.5*Data["screen"]["size"][1]/20), Data)
+                explosions.extend([newExplosion])
+                mines.remove(mine)
+                
+                bullets.remove(bullet)
+            
+    return mines, explosions, player, bullets
 
 def useKeyPressed(screen, scene):    
     if pygame.sprite.collide_rect(scene.player, scene.doorCollider):
