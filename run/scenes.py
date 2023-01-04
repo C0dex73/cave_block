@@ -290,7 +290,7 @@ class Game:
                 if not newBullet == None : newListOfBBullets.append(newBullet)
             self.bullets = newListOfBBullets
             
-            self.mines, self.explosions, self.player = damage_collisions(screen, self.mines, self.player, None, self.explosions, None, self.Data)
+            self.mines, self.explosions, self.player, self.bullets = damage_collisions(screen, self.mines, self.player, None, self.explosions, self.bullets, self.Data)
             if keys[eval("pygame.K_" + self.Data["inputs"]["use"])] :
                 self.next = useKeyPressed(screen, self)
             if keys[eval("pygame.K_" + self.Data["inputs"]["shoot"])] and testEvent([pygame.KEYDOWN], events):
