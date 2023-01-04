@@ -15,6 +15,8 @@ def main():
     screen = pygame.display.set_mode(Data["screen"]["size"]) #init the screen
     state = 1 # state variable
     clock = pygame.time.Clock() #init the clock
+    pygame.mixer.init() #init the music maker
+    pygame.mixer.music.set_volume(Data["volume"])
 
     scene = Menu(screen, Data) #set the first scene to the menu scene
     pygame.display.set_caption(Data["screen"]["caption"]) #set the title of the window

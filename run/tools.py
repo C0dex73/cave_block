@@ -13,7 +13,7 @@ def SetData(data, jsonFilePath):
 
 def Rescaler(pos, axis=-1):
     Data = json.load(open("data/app.json", "r"))
-    actualResolution = Data["screen"]["size"]
+    actualResolution = Data["screen"]["size"].copy()
     betaResolution = [1080, 720]
     
     if axis == -1 : axis = actualResolution.index(min(actualResolution))
@@ -142,15 +142,15 @@ def TerrainGen(Data):
         if find:
             break
         
-        for mine in range(random.randint(Data["entities"]["mine"]["genMin"], Data["entities"]["mine"]["genMax"])-1):
-            case, line = 0, 0
-            while not terrain[line][case].__contains__("0") : case, line = random.randint(0, len(terrain[line])-1), random.randint(0, len(terrain)-1)
-            positions["mines"].append((case*Data["screen"]["size"][0]/40, line*Data["screen"]["size"][1]/20))
-            
-        for flyer in range(random.randint(Data["entities"]["mine"]["genMin"], Data["entities"]["mine"]["genMax"])):
-            case, line = 0, 0
-            while not terrain[line][case].__contains__("0") : case, line = random.randint(0, len(terrain[line])-1), random.randint(0, len(terrain)-1)
-            positions["flyers"].append((case*Data["screen"]["size"][0]/40, line*Data["screen"]["size"][1]/20))
+    for mine in range(random.randint(Data["entities"]["mine"]["genMin"], Data["entities"]["mine"]["genMax"])-1):
+        case, line = 0, 0
+        while not terrain[line][case].__contains__("0") : case, line = random.randint(0, len(terrain[line])-1), random.randint(0, len(terrain)-1)
+        positions["mines"].append((case*Data["screen"]["size"][0]/40, line*Data["screen"]["size"][1]/20))
+        
+    for flyer in range(random.randint(Data["entities"]["mine"]["genMin"], Data["entities"]["mine"]["genMax"])):
+        case, line = 0, 0
+        while not terrain[line][case].__contains__("0") : case, line = random.randint(0, len(terrain[line])-1), random.randint(0, len(terrain)-1)
+        positions["flyers"].append((case*Data["screen"]["size"][0]/40, line*Data["screen"]["size"][1]/20))
             
 
     return terrain, positions #return the generated terrain
@@ -162,7 +162,7 @@ def DrawTerrain(screen, CodedTerrain, Data, saveFilePath=None): #TODO : implemen
     if saveFilePath is not None:
         CodedTerrain = json.load(open(saveFilePath, 'r'))
         
-    Decoder = Data["terrainDecoder"] #get the decoder data
+    Decoder = Data["terrainDecoder"].copy() #get the decoder data
     imageList = os.listdir("assets/used") #get all the assets
     
     for line in range(len(CodedTerrain)):

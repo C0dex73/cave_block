@@ -1,5 +1,6 @@
 {
   "devMode" : false,
+  "volume" : 0.2,
   "screen": {
     "size": [
       1280,

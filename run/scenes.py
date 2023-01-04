@@ -4,8 +4,8 @@ from run.interactions import *
 import pygame
 
 class Menu: #to handle the menu display
-    def __init__(self, screen, Data): #called while initializing the class
-        self.Data = Data
+    def __init__(self, screen, Data, timer=0.00): #called while initializing the class
+        self.Data = Data.copy()
         self.next = self #set the next scene to itself
         self.font = pygame.font.Font("assets/font.ttf", Rescaler(125)) #set the font
 
@@ -14,16 +14,17 @@ class Menu: #to handle the menu display
         self.OptionText = self.font.render("Option", True, (250, 250, 250)) #set the text of the OptionButton
         self.newGameText = self.font.render("New Game", True, (250, 250, 250)) #set the text of the NewGameButton
         
-        pygame.mixer.music.stop()
-        pygame.mixer.music.unload()
-        pygame.mixer.music.load("assets/sounds/menu.ogg")
-        pygame.mixer.music.play(-1)
+        if timer != -1:
+            pygame.mixer.music.stop()
+            pygame.mixer.music.unload()
+            pygame.mixer.music.load("assets/sounds/menu.ogg")
+            pygame.mixer.music.play(-1, timer, 500)
     
     
     def tick(self, screen, events, keys): #called every active tick
         self.Data = GetData("data/app.json") #actualize the data
         #background image
-        self.bg = pygame.image.load("assets/used/menu.png").convert() #load the bg menu image #TODO : use the real path
+        self.bg = pygame.image.load("assets/test.png").convert() #load the bg menu image #TODO : use the real path
         self.bg = pygame.transform.scale(self.bg, self.Data["screen"]["size"]) #rescale the image to the size of the screen
         screen.blit(self.bg, (0, 0)) #print the image on the screen
         
@@ -50,7 +51,7 @@ class Menu: #to handle the menu display
         screen.blit(self.OptionText, optionButtonTLCorner) #render the text
 
         #NEW GAME button
-        newGameButtonTLCorner = (Rescaler(50, 0), Rescaler(400, 1)) #set the topleft corner of the button
+        newGameButtonTLCorner = (Rescaler(50, 0), Rescaler(300, 1)) #set the topleft corner of the button
         self.newGameButtonSurface = self.newGameText.get_rect(topleft=newGameButtonTLCorner) #get the whole text surface
         if self.newGameButtonSurface.collidepoint(pygame.mouse.get_pos()[0], pygame.mouse.get_pos()[1]): #if the mouse hoover the text
             self.newGameText = self.font.render("New Game", True, (250, 250, 250)) #make it lighter
@@ -63,9 +64,9 @@ class Menu: #to handle the menu display
 
 
 class Options: #to handle the option menu display
-    def __init__(self, screen, Data, returnScene): #called when initializing this class
+    def __init__(self, screen, Data, returnScene, timer=0.00): #called when initializing this class
         self.returnScene = returnScene #save the scene to call at the end of the option scene
-        self.Data = Data #save Data
+        self.Data = Data.copy() #save Data
         self.next = self #set the next scene to itself
         self.font1 = pygame.font.Font("assets/font.ttf", Rescaler(125)) #set the fonts
         self.font2 = pygame.font.Font("assets/font2.ttf", Rescaler(25))
@@ -222,12 +223,12 @@ class Options: #to handle the option menu display
 
 
 class Game:
-    def __init__(self, screen, Data, player=None, mines=None, flyers=None, igMenu=False, playerHealth=100): #called when initializing this class
+    def __init__(self, screen, Data, timer=0.00, player=None, mines=None, flyers=None, igMenu=False, playerHealth=100): #called when initializing this class
         self.font = pygame.font.Font("assets/font.ttf", Rescaler(100)) #set the font
         self.HUDfont = pygame.font.Font("assets/HUDfont.ttf", Rescaler(75, 0)) #set the HUD font
         self.OptionText = self.font.render("Option", True, (250, 250, 250)) #set the text of the OptionButton
         self.MenuText = self.font.render("Menu", True, (250, 250, 250)) #set the text of the ExitButton
-        self.Data = Data #set the data
+        self.Data = Data.copy() #set the data
         
         #entities
         self.terrain, self.positions = TerrainGen(self.Data) #generate the coded terrain and the positions of the entities
@@ -241,6 +242,12 @@ class Game:
                 self.mines.append(Mine(screen, minePos, self.Data))
         else :
             self.mines = mines
+        if flyers == None:
+            self.flyers = []
+            for flyerPos in self.positions["flyers"]:
+                self.flyers.append(Flyer(screen, flyerPos, self.Data))
+        else :
+            self.flyers = flyers
         self.explosions = []
         self.bullets = []
         
@@ -248,27 +255,28 @@ class Game:
         self.toDrawTerrain, self.collider, self.doorCollider = DrawTerrain(screen, self.terrain, self.Data) #set terrain image and collider
         self.inGameMenu = igMenu #set toggleable var for in-game menu
         self.GO = False
+        self.timer = timer
         
-        pygame.mixer.music.stop()
-        pygame.mixer.music.unload()
-        pygame.mixer.music.load("assets/sounds/ambient.wav")
-        pygame.mixer.music.play(-1)
+        if timer != -1:
+            pygame.mixer.music.stop()
+            pygame.mixer.music.unload()
+            pygame.mixer.music.load("assets/sounds/ambient.ogg")
+            pygame.mixer.music.play(-1, self.timer, 500)
         
     def tick(self, screen, events, keys):
         #if the user press the igMenu key then toggle the menu interface
         if self.player.features["health"] <= 0: self.GO = True #make the game over
-        
         if keys[eval("pygame.K_" + self.Data["inputs"]["igMenu"])] and self.inGameMenu and testEvent([pygame.KEYDOWN], events):
             pygame.mixer.music.stop()
             pygame.mixer.music.unload()
-            pygame.mixer.music.load("assets/sounds/ambient.wav")
-            pygame.mixer.music.play(-1)
+            pygame.mixer.music.load("assets/sounds/ambient.ogg")
+            pygame.mixer.music.play(-1, self.timer, 500)
         elif keys[eval("pygame.K_" + self.Data["inputs"]["igMenu"])] and testEvent([pygame.KEYDOWN], events):
+            self.timer = pygame.mixer.music.get_pos() / 1000
             pygame.mixer.music.stop()
             pygame.mixer.music.unload()
             pygame.mixer.music.load("assets/sounds/menu.ogg")
             pygame.mixer.music.play(-1)
-        
         if keys[eval("pygame.K_" + self.Data["inputs"]["igMenu"])] and testEvent([pygame.KEYDOWN], events): self.inGameMenu = not self.inGameMenu
         if self.GO:
             self.Game_Over(screen, events)
@@ -278,6 +286,8 @@ class Game:
             screen.blit(self.toDrawTerrain, (0, 0))
             for mine in self.mines:
                 mine.tick(screen)
+            for flyer in self.flyers:
+                flyer.tick(screen, self.player, self.bullets)
             self.player.tick(screen, events, keys, self.collider)
             newListOfExplosions = []
             for explosion in self.explosions:
@@ -289,19 +299,16 @@ class Game:
                 newBullet = bullet.tick(screen, self.collider)
                 if not newBullet == None : newListOfBBullets.append(newBullet)
             self.bullets = newListOfBBullets
-            
-            self.mines, self.explosions, self.player, self.bullets = damage_collisions(screen, self.mines, self.player, None, self.explosions, self.bullets, self.Data)
+            self.mines, self.explosions, self.player, self.bullets, self.flyers = damage_collisions(screen, self.mines, self.player, self.flyers, self.explosions, self.bullets, self.Data)
             if keys[eval("pygame.K_" + self.Data["inputs"]["use"])] :
                 self.next = useKeyPressed(screen, self)
             if keys[eval("pygame.K_" + self.Data["inputs"]["shoot"])] and testEvent([pygame.KEYDOWN], events):
                 shootKeyPressed(screen, self, keys)
-            
             #HUD drawing
             HUDtopLeftCorner = (Rescaler(50, 0), Rescaler(600, 1))
             HUDtopLeftText = self.HUDfont.render(str(self.player.features["health"]) + " -" + str(self.player.features["power"]), True, (251,126,20))
             HUDtopLeftText.set_alpha(40)
             screen.blit(HUDtopLeftText, HUDtopLeftCorner)
-            
             
             
     def __IGMenu(self, screen, events): #render the in-game menu 
