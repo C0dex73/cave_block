@@ -3,8 +3,8 @@
   "volume" : 0,
   "screen": {
     "size": [
-      1280,
-      640
+      100,
+      1255
     ],
     "caption": "CaveBlock"
   },

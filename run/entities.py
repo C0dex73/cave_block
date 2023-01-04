@@ -2,7 +2,7 @@
 entity hanlder module
 """
 import pygame
-from run.tools import Rescaler
+from run.tools import *
 import time
 import math
 
@@ -61,6 +61,8 @@ class Player(pygame.sprite.Sprite):
 
     def tick(self, screen, events, keys, terrainCollider):
         """called each game tick to modify player state"""
+        #actualize the Data
+        self.Data = GetData("data/app.json")
 
         if self.features["health"] < 0 : self.features["health"] = 0
         #bool(Sprite()) will return True if the Sprite exists, we check if the 
@@ -157,6 +159,8 @@ class Mine(pygame.sprite.Sprite):
     
     def tick(self, screen):
         """called each game tick"""
+        #actualize the Data
+        self.Data = GetData("data/app.json")
         
         if self.features["health"] < 0 : return None
         #load the image
@@ -191,6 +195,8 @@ class Explosion(pygame.sprite.Sprite):
         
     def tick(self, screen):
         """called each game tick"""
+        #actualize the Data
+        self.Data = GetData("data/app.json")
         
         #load the image
         imagePath = "assets/used/explosion_" + str(math.floor(self.imageState)) + ".png"
@@ -219,6 +225,8 @@ class Bullet(pygame.sprite.Sprite):
         self.direction = pygame.math.Vector2(direction, 0)
         
     def tick(self, screen, terrainCollider):
+        #actualize the Data
+        self.Data = GetData("data/app.json")
         if pygame.sprite.spritecollideany(self, terrainCollider): return None
         else: 
             screen.blit(self.image, self.position)
@@ -245,6 +253,8 @@ class Flyer(pygame.sprite.Sprite):
     
     def tick(self, screen, player, bullets, terrainCollider):
         """called each game tick"""
+        #actualize the Data
+        self.Data = GetData("data/app.json")
         if self.features["health"] <= 0 : return None, bullets
         #load the image
         imagePath = "assets/used/FLYER_" + str(math.floor(self.imageState)) + ".png"

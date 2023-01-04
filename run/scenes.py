@@ -288,6 +288,9 @@ class Game:
         
         return Nothing
         """
+        #actualize the Data
+        self.Data = GetData("data/app.json")
+        
         #if the user press the igMenu key then toggle the menu interface
         if self.player.features["health"] <= 0: self.GO = True #make the game over
         if keys[eval("pygame.K_" + self.Data["inputs"]["igMenu"])] and self.inGameMenu and testEvent([pygame.KEYDOWN], events):
@@ -427,6 +430,7 @@ class Game:
         
         screen.blit(GameOverSurface, (0, 0))
         pygame.display.update()
+        pygame.event.get()
         
         GO = True
         while GO:

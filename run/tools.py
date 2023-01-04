@@ -3,15 +3,39 @@ import random
 import pygame
 import os
 
-def GetData(jsonFilePath):
+def GetData(jsonFilePath:str) -> dict:
+    """
+    take the data from a json file and return it as a dictionary
+    
+    jsonFilePath (string) : the path of the json file
+    
+    return : Data(dictionary)
+    """
     with open(jsonFilePath, 'r') as jsonFile:
         return json.load(jsonFile)
     
-def SetData(data, jsonFilePath):
+def SetData(data:dict, jsonFilePath:str) -> None: #! NOT USED FOR NOW
+    """
+    Write a dictionary into a json file
+    
+    jsonFilePath : the path of the json file
+    
+    return : Nothing
+    """
     with open(jsonFilePath, 'w') as jsonFile:
         json.dump(data, jsonFile)
 
-def Rescaler(pos, axis=-1):
+def Rescaler(pos:float, axis:int=-1):
+    """Used many times to calculate the coordinates of an object
+    relatively to the current coordinate and the current screen size.
+    - process only one value of a position at time !
+
+    Args:
+        pos (float): the current position before calculating the new ones
+        axis (int, optional): the axis of the value (default -1=take the smallest change)
+    Returns:
+        _type_: _description_
+    """
     Data = json.load(open("data/app.json", "r"))
     actualResolution = Data["screen"]["size"].copy()
     betaResolution = [1080, 720]
