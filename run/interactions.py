@@ -27,7 +27,7 @@ def damage_collisions(screen, mines, player, flyers, explosions, bullets, Data):
 
 def useKeyPressed(screen, scene):    
     if pygame.sprite.collide_rect(scene.player, scene.doorCollider):
-        scene = scenes.Game(screen, scene.Data, playerHealth=scene.player.features["health"])
+        scene = scenes.Game(screen, scene.Data, timer=pygame.mixer.music.get_pos()/1000, playerHealth=scene.player.features["health"])
     
     return scene
 

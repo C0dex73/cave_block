@@ -206,8 +206,9 @@ class Explosion(pygame.sprite.Sprite):
         return self
     
 class Bullet(pygame.sprite.Sprite):
-    def __init__(self, position, direction, Data):
+    def __init__(self, position, direction, Data, Enemy=False):
         self.position = position
+        self.enemy = Enemy
         self.direction = direction
         self.image = pygame.image.load("assets/used/laser.png").convert_alpha()
         self.image = pygame.transform.scale(self.image, (Rescaler(40, 0), Rescaler(20, 1)))
@@ -223,3 +224,47 @@ class Bullet(pygame.sprite.Sprite):
             self.position = (self.direction * self.features["speed"] + self.position[0], self.position[1])
             
             return self
+        
+class Flyer(pygame.sprite.Sprite):
+    """class to handle flyer object and all this features"""
+    
+    def __init__(self, screen, position, Data):
+        """intialize flyer class"""
+        self.Data = Data
+        self.imageState = 1
+        #^same as line 11
+        self.imageTimer = time.time_ns()//10**8 % 10
+        self.position = position
+        
+        #load the image to get the rectangle
+        imagePath = "assets/used/FLYER_" + str(math.floor(self.imageState)) + ".png"
+        flyerImage = pygame.image.load(imagePath).convert_alpha()
+        flyerImage = pygame.transform.scale(flyerImage, (1*self.Data["screen"]["size"][0]/40, 1*self.Data["screen"]["size"][1]/20)) #40 and 20 if the number of lines and columns
+        self.rect = flyerImage.get_rect(topleft = self.position) #40 and 20 if the number of lines and column
+        
+        self.playerChecker = pygame.sprite.Sprite()
+        self.playerChecker.rect = pygame.Rect(0, self.rect.centery, Data["screen"]["size"][0], 1)
+        
+        self.features = self.Data["entities"]["flyer"] #get all the mine features
+    
+    def tick(self, screen, player, bullets):
+        """called each game tick"""
+        #load the image
+        imagePath = "assets/used/FLYER_" + str(math.floor(self.imageState)) + ".png"
+        flyerImage = pygame.image.load(imagePath).convert_alpha()
+        flyerImage = pygame.transform.scale(flyerImage, (1*self.Data["screen"]["size"][0]/40, 1*self.Data["screen"]["size"][1]/20)) #40 and 20 if the number of lines and columns
+        self.rect = flyerImage.get_rect(topleft = self.position) #40 and 20 if the number of lines and column
+        
+        #change the image of the mine relatyvely to the time passed
+        #every 1/10 second, we add 1/8 to the image state
+        #so 1/2 per 1/10 = 5 images every seconds
+        if time.time_ns()//10**8 % 10 != self.imageTimer: #^same calcul as line 11, and if it's different
+            self.imageState += 1/2
+            if self.imageState == 5: self.imageState = 1 #if we overflowed (no file named MINE_3)
+            
+        if player.position[1] < self.position[1] : flyerImage = pygame.transform.flip(flyerImage, True, False)
+        
+        pygame.draw.rect(screen, (255, 150, 150), self.playerChecker.rect) #type:ignore
+            
+        #draw the mine if it's alive, else draw the explosion
+        screen.blit(flyerImage, self.position)
