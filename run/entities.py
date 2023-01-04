@@ -254,8 +254,6 @@ class Flyer(pygame.sprite.Sprite):
             if self.imageState == 5: self.imageState = 1 #if we overflowed (no file named MINE_3)
             
         if player.position[1] < self.position[1] : flyerImage = pygame.transform.flip(flyerImage, True, False)
-        
-        pygame.draw.rect(screen, (255, 150, 150), self.playerChecker.rect) #type:ignore
             
         #draw the mine if it's alive, else draw the explosion
         screen.blit(flyerImage, self.position)

@@ -11,10 +11,12 @@ def damage_collisions(screen, mines, player, flyers, explosions, bullets, Data):
             mine.features["health"] = 0
             newExplosion = Explosion(screen, (mine.position[0]-0.5*Data["screen"]["size"][0]/40, mine.position[1]-0.5*Data["screen"]["size"][1]/20), Data)
             explosions.extend([newExplosion])
-            shootSound = pygame.mixer.Sound("assets/sounds/OOF.ogg")
-            shootSound.play()
-            shootSound = pygame.mixer.Sound("assets/sounds/Boom.ogg")
-            shootSound.play()
+            damageSound = pygame.mixer.Sound("assets/sounds/OOF.ogg")
+            damageSound.set_volume(Data["volume"])
+            damageSound.play()
+            explosionSound = pygame.mixer.Sound("assets/sounds/Boom.ogg")
+            explosionSound.set_volume(Data["volume"])
+            explosionSound.play()
             player.features["health"] -= newExplosion.features["damage"]
             mines.remove(mine)
             
@@ -23,8 +25,9 @@ def damage_collisions(screen, mines, player, flyers, explosions, bullets, Data):
                 mine.features["health"] = 0
                 newExplosion = Explosion(screen, (mine.position[0]-0.5*Data["screen"]["size"][0]/40, mine.position[1]-0.5*Data["screen"]["size"][1]/20), Data)
                 explosions.extend([newExplosion])
-                shootSound = pygame.mixer.Sound("assets/sounds/Boom.ogg")
-                shootSound.play()
+                explosionSound = pygame.mixer.Sound("assets/sounds/Boom.ogg")
+                explosionSound.set_volume(Data["volume"])
+                explosionSound.play()
                 mines.remove(mine)
                 
                 bullets.remove(bullet)
@@ -47,6 +50,7 @@ def shootKeyPressed(screen, scene, keys):
     if scene.player.features["power"] > 0 :
         newBullet = Bullet(position, direction, scene.Data)
         shootSound = pygame.mixer.Sound("assets/sounds/Piou_piou.ogg")
+        shootSound.set_volume(scene.Data["volume"])
         shootSound.play()
         scene.bullets.append(newBullet)
         scene.player.features["power"] -= 1
