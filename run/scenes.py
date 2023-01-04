@@ -14,6 +14,10 @@ class Menu: #to handle the menu display
         self.OptionText = self.font.render("Option", True, (250, 250, 250)) #set the text of the OptionButton
         self.newGameText = self.font.render("New Game", True, (250, 250, 250)) #set the text of the NewGameButton
         
+        pygame.mixer.music.stop()
+        pygame.mixer.music.unload()
+        pygame.mixer.music.load("assets/sounds/menu.ogg")
+        pygame.mixer.music.play(-1)
     
     
     def tick(self, screen, events, keys): #called every active tick
@@ -245,10 +249,26 @@ class Game:
         self.inGameMenu = igMenu #set toggleable var for in-game menu
         self.GO = False
         
+        pygame.mixer.music.stop()
+        pygame.mixer.music.unload()
+        pygame.mixer.music.load("assets/sounds/ambient.wav")
+        pygame.mixer.music.play(-1)
+        
     def tick(self, screen, events, keys):
-        self.Data = GetData("data/app.json") #actualize the data
         #if the user press the igMenu key then toggle the menu interface
         if self.player.features["health"] <= 0: self.GO = True #make the game over
+        
+        if keys[eval("pygame.K_" + self.Data["inputs"]["igMenu"])] and self.inGameMenu and testEvent([pygame.KEYDOWN], events):
+            pygame.mixer.music.stop()
+            pygame.mixer.music.unload()
+            pygame.mixer.music.load("assets/sounds/ambient.wav")
+            pygame.mixer.music.play(-1)
+        elif keys[eval("pygame.K_" + self.Data["inputs"]["igMenu"])] and testEvent([pygame.KEYDOWN], events):
+            pygame.mixer.music.stop()
+            pygame.mixer.music.unload()
+            pygame.mixer.music.load("assets/sounds/menu.ogg")
+            pygame.mixer.music.play(-1)
+        
         if keys[eval("pygame.K_" + self.Data["inputs"]["igMenu"])] and testEvent([pygame.KEYDOWN], events): self.inGameMenu = not self.inGameMenu
         if self.GO:
             self.Game_Over(screen, events)
@@ -264,10 +284,17 @@ class Game:
                 newExplosion = explosion.tick(screen)
                 if not newExplosion == None : newListOfExplosions.append(newExplosion)
             self.explosions = newListOfExplosions
+            newListOfBBullets = []
+            for bullet in self.bullets:
+                newBullet = bullet.tick(screen, self.collider)
+                if not newBullet == None : newListOfBBullets.append(newBullet)
+            self.bullets = newListOfBBullets
             
             self.mines, self.explosions, self.player = damage_collisions(screen, self.mines, self.player, None, self.explosions, None, self.Data)
             if keys[eval("pygame.K_" + self.Data["inputs"]["use"])] :
-                self.bullets, self.next = useKeyPressed(screen, self.player, self.bullets, self.doorCollider, self, self.Data)
+                self.next = useKeyPressed(screen, self)
+            if keys[eval("pygame.K_" + self.Data["inputs"]["shoot"])] and testEvent([pygame.KEYDOWN], events):
+                shootKeyPressed(screen, self, keys)
             
             #HUD drawing
             HUDtopLeftCorner = (Rescaler(50, 0), Rescaler(600, 1))

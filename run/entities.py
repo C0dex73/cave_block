@@ -71,6 +71,7 @@ class Player():
         #gravity
         if not self.isGrounded : self.direction.y += 0.1
         
+        #toggle between crouch and normal position for the colliders
         if self.isCrouching :
             self.checkSprites.sprites()[1].rect.centery = self.checkSprites.sprites()[0].rect.centery - 2 - self.Data["screen"]["size"][0]/40 #type: ignore (rect not static)
             self.checkSprites.sprites()[2].rect.height = self.Data["screen"]["size"][0]/40 - 4 #type: ignore (rect not static)
@@ -205,7 +206,20 @@ class Explosion(pygame.sprite.Sprite):
         return self
     
 class Bullet(pygame.sprite.Sprite):
-    def __init__(self, screen, position, direction):
+    def __init__(self, position, direction, Data):
         self.position = position
         self.direction = direction
-        self.image = 
+        self.image = pygame.image.load("assets/used/laser.png").convert_alpha()
+        self.image = pygame.transform.scale(self.image, (Rescaler(40, 0), Rescaler(20, 1)))
+        self.rect = self.image.get_rect(topleft=self.position)
+        self.features = Data["entities"]["bullet"]
+        
+    def tick(self, screen, terrainCollider):
+        if pygame.sprite.spritecollideany(self, terrainCollider): return None
+        else: 
+            screen.blit(self.image, self.position)
+            self.rect.topleft = self.position #type: ignore (rect not static)
+            
+            self.position = (self.direction * self.features["speed"] + self.position[0], self.position[1])
+            
+            return self
