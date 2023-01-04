@@ -13,7 +13,7 @@ def SetData(data, jsonFilePath):
 
 def Rescaler(pos, axis=-1):
     Data = json.load(open("data/app.json", "r"))
-    actualResolution = Data["screen"]["size"]
+    actualResolution = Data["screen"]["size"].copy()
     betaResolution = [1080, 720]
     
     if axis == -1 : axis = actualResolution.index(min(actualResolution))
@@ -162,7 +162,7 @@ def DrawTerrain(screen, CodedTerrain, Data, saveFilePath=None): #TODO : implemen
     if saveFilePath is not None:
         CodedTerrain = json.load(open(saveFilePath, 'r'))
         
-    Decoder = Data["terrainDecoder"] #get the decoder data
+    Decoder = Data["terrainDecoder"].copy() #get the decoder data
     imageList = os.listdir("assets/used") #get all the assets
     
     for line in range(len(CodedTerrain)):

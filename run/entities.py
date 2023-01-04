@@ -12,7 +12,7 @@ class Player():
     """
     def __init__(self, screen, position, Data, health):
         """intialize the player class"""
-        self.Data = Data
+        self.Data = Data.copy()
         self.speed = Data["entities"]["player"]["speed"]
         self.imageState = 1
         #? what is the line below doing ?
@@ -56,7 +56,7 @@ class Player():
         self.isCrouching = False
         self.oldIsCrouching = False
         
-        self.features = Data["entities"]["player"]
+        self.features = Data["entities"]["player"].copy()
         self.features["health"] = health
 
     def tick(self, screen, events, keys, terrainCollider):
@@ -146,13 +146,13 @@ class Mine(pygame.sprite.Sprite):
     
     def __init__(self, screen, position, Data):
         """intialize mine class"""
-        self.Data = Data
+        self.Data = Data.copy()
         self.imageState = 1
         #^same as line 11
         self.imageTimer = time.time_ns()//10**8 % 10
         self.position = position
         
-        self.features = self.Data["entities"]["mine"] #get all the mine features
+        self.features = self.Data["entities"]["mine"].copy() #get all the mine features
     
     def tick(self, screen):
         """called each game tick"""
@@ -178,13 +178,13 @@ class Explosion(pygame.sprite.Sprite):
     
     def __init__(self, screen, position, Data):
         """initialize the class"""
-        self.Data = Data
+        self.Data = Data.copy()
         self.position = position
         self.imageState = 1
         #^same as line 11
         self.imageTimer = time.time_ns()//10**8 % 10
         
-        self.features = Data["entities"]["explosion"]
+        self.features = Data["entities"]["explosion"].copy()
         
     def tick(self, screen):
         """called each game tick"""
@@ -213,7 +213,7 @@ class Bullet(pygame.sprite.Sprite):
         self.image = pygame.image.load("assets/used/laser.png").convert_alpha()
         self.image = pygame.transform.scale(self.image, (Rescaler(40, 0), Rescaler(20, 1)))
         self.rect = self.image.get_rect(topleft=self.position)
-        self.features = Data["entities"]["bullet"]
+        self.features = Data["entities"]["bullet"].copy()
         
     def tick(self, screen, terrainCollider):
         if pygame.sprite.spritecollideany(self, terrainCollider): return None
@@ -230,22 +230,13 @@ class Flyer(pygame.sprite.Sprite):
     
     def __init__(self, screen, position, Data):
         """intialize flyer class"""
-        self.Data = Data
+        self.Data = Data.copy()
         self.imageState = 1
         #^same as line 11
         self.imageTimer = time.time_ns()//10**8 % 10
         self.position = position
         
-        #load the image to get the rectangle
-        imagePath = "assets/used/FLYER_" + str(math.floor(self.imageState)) + ".png"
-        flyerImage = pygame.image.load(imagePath).convert_alpha()
-        flyerImage = pygame.transform.scale(flyerImage, (1*self.Data["screen"]["size"][0]/40, 1*self.Data["screen"]["size"][1]/20)) #40 and 20 if the number of lines and columns
-        self.rect = flyerImage.get_rect(topleft = self.position) #40 and 20 if the number of lines and column
-        
-        self.playerChecker = pygame.sprite.Sprite()
-        self.playerChecker.rect = pygame.Rect(0, self.rect.centery, Data["screen"]["size"][0], 1)
-        
-        self.features = self.Data["entities"]["flyer"] #get all the mine features
+        self.features = self.Data["entities"]["flyer"].copy() #get all the mine features
     
     def tick(self, screen, player, bullets):
         """called each game tick"""

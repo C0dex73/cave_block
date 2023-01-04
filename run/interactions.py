@@ -13,6 +13,8 @@ def damage_collisions(screen, mines, player, flyers, explosions, bullets, Data):
             explosions.extend([newExplosion])
             shootSound = pygame.mixer.Sound("assets/sounds/OOF.ogg")
             shootSound.play()
+            shootSound = pygame.mixer.Sound("assets/sounds/Boom.ogg")
+            shootSound.play()
             player.features["health"] -= newExplosion.features["damage"]
             mines.remove(mine)
             
@@ -27,11 +29,11 @@ def damage_collisions(screen, mines, player, flyers, explosions, bullets, Data):
                 
                 bullets.remove(bullet)
             
-    return mines, explosions, player, bullets
+    return mines, explosions, player, bullets, flyers
 
 def useKeyPressed(screen, scene):    
     if pygame.sprite.collide_rect(scene.player, scene.doorCollider):
-        scene = scenes.Game(screen, scene.Data, timer=pygame.mixer.music.get_pos()/1000, playerHealth=scene.player.features["health"])
+        scene = scenes.Game(screen, scene.Data, timer=-1, playerHealth=scene.player.features["health"])
     
     return scene
 
@@ -42,7 +44,6 @@ def shootKeyPressed(screen, scene, keys):
     if keys[eval("pygame.K_" + scene.Data["inputs"]["left"])] and not keys[eval("pygame.K_" + scene.Data["inputs"]["right"])]: direction = -1 ; factor = 3
     else: direction = 1
     position = (scene.player.rect.centerx + factor*direction*scene.player.rect.width/2, scene.player.position[1] + Rescaler(25)*groundedFactor)
-    
     if scene.player.features["power"] > 0 :
         newBullet = Bullet(position, direction, scene.Data)
         shootSound = pygame.mixer.Sound("assets/sounds/Piou_piou.ogg")
