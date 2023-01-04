@@ -322,7 +322,7 @@ class Game:
              #do flyers tick and update their state
             newListOfFlyers = []
             for flyer in self.flyers:
-                newFlyer = flyer.tick(screen, self.player, self.bullets)
+                newFlyer, self.bullets = flyer.tick(screen, self.player, self.bullets, self.collider)
                 if not newFlyer == None : newListOfFlyers.append(newFlyer)
             
             

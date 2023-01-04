@@ -24,7 +24,7 @@ def damage_collisions(screen, mines, player, flyers, explosions, bullets, Data, 
             player.features["health"] -= mine.features["damage"]
             
         for bullet in bullets:
-            if pygame.sprite.collide_rect(mine, bullet):
+            if pygame.sprite.collide_rect(mine, bullet) and not bullet.enemy:
                 mine.features["health"] -= bullet.features["damage"]
                 newExplosion = Explosion(screen, (mine.position[0]-0.5*Data["screen"]["size"][0]/40, mine.position[1]-0.5*Data["screen"]["size"][1]/20), Data)
                 explosions.extend([newExplosion])
@@ -49,7 +49,7 @@ def damage_collisions(screen, mines, player, flyers, explosions, bullets, Data, 
             player.features["health"] -= flyer.features["damage"]
             
         for bullet in bullets:
-            if pygame.sprite.collide_rect(flyer, bullet):
+            if pygame.sprite.collide_rect(flyer, bullet) and not bullet.enemy:
                 flyer.features["health"] -= bullet.features["damage"]
                 newExplosion = Explosion(screen, (flyer.position[0]-0.5*Data["screen"]["size"][0]/40, flyer.position[1]-0.5*Data["screen"]["size"][1]/20), Data)
                 explosions.extend([newExplosion])
@@ -58,6 +58,17 @@ def damage_collisions(screen, mines, player, flyers, explosions, bullets, Data, 
                 explosionSound.play()
                 
                 bullets.remove(bullet)
+                
+    for bullet in bullets:
+        if pygame.sprite.collide_rect(bullet, player) and bullet.enemy:
+            player.features["health"] -= bullet.features["damage"]
+            newExplosion = Explosion(screen, (player.position[0]-0.5*Data["screen"]["size"][0]/40, player.position[1]-0.5*Data["screen"]["size"][1]/20), Data)
+            explosions.extend([newExplosion])
+            explosionSound = pygame.mixer.Sound("assets/sounds/Boom.ogg")
+            explosionSound.set_volume(Data["volume"])
+            explosionSound.play()
+            
+            bullets.remove(bullet)
         
     return mines, explosions, player, bullets, flyers, oldTime
 

@@ -6,7 +6,7 @@ from run.tools import Rescaler
 import time
 import math
 
-class Player():
+class Player(pygame.sprite.Sprite):
     """
     Player class that handles the health, position, movement and all the things related to the player
     """
@@ -212,11 +212,11 @@ class Bullet(pygame.sprite.Sprite):
     def __init__(self, position, direction, Data, Enemy=False):
         self.position = position
         self.enemy = Enemy
-        self.direction = direction
         self.image = pygame.image.load("assets/used/laser.png").convert_alpha()
         self.image = pygame.transform.scale(self.image, (Rescaler(40, 0), Rescaler(20, 1)))
         self.rect = self.image.get_rect(topleft=self.position)
         self.features = Data["entities"]["bullet"].copy()
+        self.direction = pygame.math.Vector2(direction, 0)
         
     def tick(self, screen, terrainCollider):
         if pygame.sprite.spritecollideany(self, terrainCollider): return None
@@ -224,7 +224,7 @@ class Bullet(pygame.sprite.Sprite):
             screen.blit(self.image, self.position)
             self.rect.topleft = self.position #type: ignore (rect not static)
             
-            self.position = (self.direction * self.features["speed"] + self.position[0], self.position[1])
+            self.position = (self.direction.x * self.features["speed"] + self.position[0], self.position[1])
             
             return self
         
@@ -238,12 +238,14 @@ class Flyer(pygame.sprite.Sprite):
         #^same as line 11
         self.imageTimer = time.time_ns()//10**8 % 10
         self.position = position
+        self.direction = pygame.math.Vector2(0, 0)
+        self.shootCoolDown = 0
         
         self.features = self.Data["entities"]["flyer"].copy() #get all the mine features
     
-    def tick(self, screen, player, bullets):
+    def tick(self, screen, player, bullets, terrainCollider):
         """called each game tick"""
-        if self.features["health"] <= 0 : return None
+        if self.features["health"] <= 0 : return None, bullets
         #load the image
         imagePath = "assets/used/FLYER_" + str(math.floor(self.imageState)) + ".png"
         flyerImage = pygame.image.load(imagePath).convert_alpha()
@@ -257,8 +259,18 @@ class Flyer(pygame.sprite.Sprite):
             self.imageState += 1/2
             if self.imageState == 5: self.imageState = 1 #if we overflowed (no file named MINE_3)
             
-        if player.position[1] < self.position[1] : flyerImage = pygame.transform.flip(flyerImage, True, False)
-            
+        if player.position[0] < self.position[0] : flyerImage = pygame.transform.flip(flyerImage, True, False)
+        
+        if self.shootCoolDown + 2 < time.time():
+            if player.position[0] < self.position[0] :
+                newBullet = Bullet(self.rect.center, -1, self.Data, Enemy=True)
+            else:
+                newBullet = Bullet(self.rect.center, 1, self.Data, Enemy=True)
+            bullets.append(newBullet)
+            self.shootCoolDown = time.time()
+                
+        self.position += self.features["speed"]*self.direction
+        
         #draw the mine if it's alive, else draw the explosion
         screen.blit(flyerImage, self.position)
-        return self
+        return self, bullets
