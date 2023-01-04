@@ -63,6 +63,9 @@ class Player(pygame.sprite.Sprite):
         """called each game tick to modify player state"""
         #actualize the Data
         self.Data = GetData("data/app.json")
+        
+        #reset health if is in devmode
+        if self.Data["devMode"] : self.features["health"] = 100 ; self.features["power"] = 60
 
         if self.features["health"] < 0 : self.features["health"] = 0
         #bool(Sprite()) will return True if the Sprite exists, we check if the 
@@ -72,7 +75,7 @@ class Player(pygame.sprite.Sprite):
         if self.isCrouching == False and self.oldIsCrouching == True and pygame.sprite.spritecollideany(self.checkSprites.sprites()[1], terrainCollider): self.isCrouching = True
         
         #gravity
-        if not self.isGrounded : self.direction.y += 0.1
+        if not self.isGrounded : self.direction.y += self.Data["gravity"]
         
         #toggle between crouch and normal position for the colliders
         if self.isCrouching :

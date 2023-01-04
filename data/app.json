@@ -1,10 +1,11 @@
 {
-  "devMode" : false,
+  "devMode" : true,
   "volume" : 0,
+  "gravity" : 0.04,
   "screen": {
     "size": [
-      100,
-      1255
+      1280,
+      640
     ],
     "caption": "CaveBlock"
   },
@@ -23,6 +24,9 @@
     ],
     "1": [
       "CONCRETE_"
+    ],
+    "P" : [
+      "plateform_"
     ],
     "2" : [
       "TECH_"
@@ -69,13 +73,13 @@
     "3DD" : [
       "DOOR_1"
     ],
-    "3DF" : [
+    "3FD" : [
       "DOOR_2"
     ],
     "2DD" : [
       "DOOR_3"
     ],
-    "2DF" : [
+    "2FD" : [
       "DOOR_4"
     ],
     "A" : [

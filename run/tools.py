@@ -160,22 +160,23 @@ def TerrainGen(Data:dict):
                 break
         if find:
             break
+        
+        
     find = False
+    Oplateform = [(0, 0), (0, 0)] #the original plateform coodinates
     for terrainCase in range(10):
         case = 40 - terrainCase -2 #40 = number of columns
         for terrainLine in range(20 + 1): #20 = number of lines
             line = 20 - terrainLine -2 #20 = number of lines
             if terrain[line][case].__contains__("0") and terrain[line+1][case].__contains__("0") and terrain[line][case+1].__contains__("0") and terrain[line+1][case+1].__contains__("0"):
                 find = True
-                terrain[line][case] = theme + "DF"
+                terrain[line][case] = theme + "FD"
                 terrain[line+1][case] = "A"
                 terrain[line+1][case+1] = "A"
                 terrain[line][case+1] = "A"
                 break
         if find:
             break
-        
-        
         
     for mine in range(random.randint(Data["entities"]["mine"]["genMin"], Data["entities"]["mine"]["genMax"])-1):
         case, line = 0, 0
@@ -215,7 +216,7 @@ def DrawTerrain(screen, CodedTerrain, Data, saveFilePath=None): #TODO : implemen
                 #then print it
                 caseImage = pygame.image.load("assets/used/" + random.choice(finalImageList)).convert_alpha()
                 caseImage = pygame.transform.scale(caseImage, (size[0] * Data["screen"]["size"][0] / 40, size[1] * Data["screen"]["size"][1] / 20)) #40 = number of columns and 20 = number of rows
-                if blockCalc.__contains__("DF"): doorColliderSurface.rect = caseImage.get_rect(topleft=(case*Data["screen"]["size"][0]/40, line*Data["screen"]["size"][1]/20))
+                if blockCalc.__contains__("FD"): doorColliderSurface.rect = caseImage.get_rect(topleft=(case*Data["screen"]["size"][0]/40, line*Data["screen"]["size"][1]/20))
                 finalTerrainSurface.blit(caseImage, (case*Data["screen"]["size"][0]/40, line*Data["screen"]["size"][1]/20)) #40 = number of columns and 20 = number of rows
 
                 #and finally set the collider logic
