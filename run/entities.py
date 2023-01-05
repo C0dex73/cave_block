@@ -75,7 +75,9 @@ class Player(pygame.sprite.Sprite):
         if self.isCrouching == False and self.oldIsCrouching == True and pygame.sprite.spritecollideany(self.checkSprites.sprites()[1], terrainCollider): self.isCrouching = True
         
         #gravity
-        if not self.isGrounded : self.direction.y += self.Data["gravity"]
+        crouchFactor = 1
+        if keys[eval("pygame.K_" + self.Data["inputs"]["crouch"])] : crouchFactor = 4
+        if not self.isGrounded : self.direction.y += self.Data["gravity"] * crouchFactor
         
         #toggle between crouch and normal position for the colliders
         if self.isCrouching :
@@ -129,7 +131,7 @@ class Player(pygame.sprite.Sprite):
             collider.rect.top += self.direction.y # type: ignore (rect not static)
             collider.rect.left += self.direction.x # type: ignore (rect not static)
             if self.Data["devMode"]: #draw it if in dev mode
-                pygame.draw.rect(screen, (255, 0, 0), collider.rect) # type: ignore (rect not static)
+               pygame.draw.rect(screen, (255, 0, 0), collider.rect) # type: ignore (rect not static)
         #take the top and left collision checkers to get the topleft corner of the image, so the position of the player
         self.position = (self.checkSprites.sprites()[3].rect.centerx, self.checkSprites.sprites()[1].rect.centery) # type: ignore (rect not static)
 

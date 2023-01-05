@@ -163,10 +163,9 @@ def TerrainGen(Data:dict):
         
         
     find = False
-    Oplateform = [(0, 0), (0, 0)] #the original plateform coodinates
     for terrainCase in range(10):
         case = 40 - terrainCase -2 #40 = number of columns
-        for terrainLine in range(20 + 1): #20 = number of lines
+        for terrainLine in range(7, 20 + 1): #20 = number of lines
             line = 20 - terrainLine -2 #20 = number of lines
             if terrain[line][case].__contains__("0") and terrain[line+1][case].__contains__("0") and terrain[line][case+1].__contains__("0") and terrain[line+1][case+1].__contains__("0"):
                 find = True

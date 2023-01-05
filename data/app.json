@@ -1,6 +1,6 @@
 {
-  "devMode" : true,
-  "volume" : 0,
+  "devMode" : false,
+  "volume" : 1,
   "gravity" : 0.04,
   "screen": {
     "size": [

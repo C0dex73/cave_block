@@ -18,9 +18,6 @@ def damage_collisions(screen, mines, player, flyers, explosions, bullets, Data, 
             damageSound = pygame.mixer.Sound("assets/sounds/OOF.ogg")
             damageSound.set_volume(Data["volume"])
             damageSound.play()
-            explosionSound = pygame.mixer.Sound("assets/sounds/Boom.ogg")
-            explosionSound.set_volume(Data["volume"])
-            explosionSound.play()
             player.features["health"] -= mine.features["damage"]
             
         for bullet in bullets:
@@ -44,9 +41,6 @@ def damage_collisions(screen, mines, player, flyers, explosions, bullets, Data, 
             damageSound = pygame.mixer.Sound("assets/sounds/OOF.ogg")
             damageSound.set_volume(Data["volume"])
             damageSound.play()
-            explosionSound = pygame.mixer.Sound("assets/sounds/Boom.ogg")
-            explosionSound.set_volume(Data["volume"])
-            explosionSound.play()
             player.features["health"] -= flyer.features["damage"]
             
         for bullet in bullets:
@@ -67,8 +61,12 @@ def damage_collisions(screen, mines, player, flyers, explosions, bullets, Data, 
             newExplosion = Explosion(screen, (player.position[0]-0.5*Data["screen"]["size"][0]/40, player.position[1]-0.5*Data["screen"]["size"][1]/20), Data)
             explosions.extend([newExplosion])
             explosionSound = pygame.mixer.Sound("assets/sounds/Boom.ogg")
-            explosionSound.set_volume(Data["volume"])
+            explosionSound.set_volume(Data["volume"]-1)
             explosionSound.play()
+            
+            damageSound = pygame.mixer.Sound("assets/sounds/OOF.ogg")
+            damageSound.set_volume(Data["volume"])
+            damageSound.play()
             
             bullets.remove(bullet)
             score -= 5
