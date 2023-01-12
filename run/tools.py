@@ -1,3 +1,4 @@
+"""this module handle all the generation, drawing and data operations"""
 import json
 import random
 import pygame
@@ -14,7 +15,7 @@ def GetData(jsonFilePath:str) -> dict:
     with open(jsonFilePath, 'r') as jsonFile:
         return json.load(jsonFile)
     
-def SetData(data:dict, jsonFilePath:str) -> None: #! NOT USED FOR NOW
+def SetData(data:dict, jsonFilePath:str) -> None:
     """
     Write a dictionary into a json file
     
@@ -32,7 +33,7 @@ def Rescaler(pos:float, axis:int=-1):
 
     Args:
         pos (float): the current position before calculating the new ones
-        axis (int, optional): the axis of the value (default -1=take the smallest change)
+        axis (int, controlal): the axis of the value (default -1=take the smallest change)
     Returns:
         _type_: _description_
     """
@@ -44,7 +45,16 @@ def Rescaler(pos:float, axis:int=-1):
     
     return round(actualResolution[axis] * pos / betaResolution[axis])
             
-def testEvent(Tevents, Revents):
+def testEvent(Tevents, Revents:list[pygame.event.Event]) -> bool | list[bool]:
+    """check if some events are appenning
+
+    Args:
+        Tevents (list[pygame.event.Event]): to test events
+        Revents (list[pygame.event.Event]): real events
+
+    Returns:
+        bool | list[bool]: for each event, return a bool
+    """
     if len(Tevents) == 1: #if there is only one event to ckeck
         for e in Revents: #for each event appenning
             if e.type == Tevents[0]: #if there are the event to check return true else return false
@@ -146,6 +156,8 @@ def TerrainGen(Data:dict):
         "mines" : [],
         "flyers" : []
     }
+    
+    
     find = False
     for terrainLine in range(20 + 1): #20 = number of lines
         line = 20 - terrainLine -2 #20 = number of lines
@@ -160,12 +172,12 @@ def TerrainGen(Data:dict):
                 break
         if find:
             break
-        
-        
+
+            
     find = False
     for terrainCase in range(10):
         case = 40 - terrainCase -2 #40 = number of columns
-        for terrainLine in range(7, 20 + 1): #20 = number of lines
+        for terrainLine in range(7, 10 + 1): #20 = number of lines
             line = 20 - terrainLine -2 #20 = number of lines
             if terrain[line][case].__contains__("0") and terrain[line+1][case].__contains__("0") and terrain[line][case+1].__contains__("0") and terrain[line+1][case+1].__contains__("0"):
                 find = True
@@ -190,8 +202,8 @@ def TerrainGen(Data:dict):
 
     return terrain, positions #return the generated terrain
     
-def DrawTerrain(screen, CodedTerrain, Data, saveFilePath=None): #TODO : implement the seed mechanism and the colliders
-    finalTerrainSurface = pygame.Surface(Data["screen"]["size"]) #* this work tho
+def DrawTerrain(screen, positions, CodedTerrain, Data, saveFilePath=None): #TODO : implement the seed mechanism and the colliders
+    finalTerrainSurface = pygame.Surface(Data["screen"]["size"])
     finalColliderSurface = pygame.sprite.Group()
     doorColliderSurface = pygame.sprite.Sprite()
     if saveFilePath is not None:

@@ -1,3 +1,4 @@
+"""this module will handle the interaction between the entities"""
 import pygame
 import time
 import run.scenes as scenes
@@ -13,7 +14,8 @@ def damage_collisions(screen, mines, player, flyers, explosions, bullets, Data, 
         if pygame.sprite.collide_rect(player, mine) and playerCollideCheck:
             oldTime = time.time()
             mine.features["health"] -= player.features["damage"]
-            newExplosion = Explosion(screen, (mine.position[0]-0.5*Data["screen"]["size"][0]/40, mine.position[1]-0.5*Data["screen"]["size"][1]/20), Data)
+            #position explosion
+            newExplosion = Explosion(screen, (mine.position[0]-0.5*Data["screen"]["size"][0]/40, mine.position[1]-0.5*Data["screen"]["size"][1]/20), Data) #type: ignore (mine not static) #!anti-ERROR
             explosions.extend([newExplosion])
             damageSound = pygame.mixer.Sound("assets/sounds/OOF.ogg")
             damageSound.set_volume(Data["volume"])
@@ -23,20 +25,20 @@ def damage_collisions(screen, mines, player, flyers, explosions, bullets, Data, 
         for bullet in bullets:
             if pygame.sprite.collide_rect(mine, bullet) and not bullet.enemy:
                 mine.features["health"] -= bullet.features["damage"]
-                newExplosion = Explosion(screen, (mine.position[0]-0.5*Data["screen"]["size"][0]/40, mine.position[1]-0.5*Data["screen"]["size"][1]/20), Data)
+                newExplosion = Explosion(screen, (mine.position[0]-0.5*Data["screen"]["size"][0]/40, mine.position[1]-0.5*Data["screen"]["size"][1]/20), Data) #type: ignore (mine not static) #!anti-ERROR
                 explosions.extend([newExplosion])
                 explosionSound = pygame.mixer.Sound("assets/sounds/Boom.ogg")
                 explosionSound.set_volume(Data["volume"])
                 explosionSound.play()
                 
                 bullets.remove(bullet)
-                score += 5
+                score += 5 #
                 
     for flyer in flyers:
         if pygame.sprite.collide_rect(player, flyer) and playerCollideCheck:
             oldTime = time.time()
             flyer.features["health"] -= player.features["damage"]
-            newExplosion = Explosion(screen, (flyer.position[0]-0.5*Data["screen"]["size"][0]/40, flyer.position[1]-0.5*Data["screen"]["size"][1]/20), Data)
+            newExplosion = Explosion(screen, (flyer.position[0]-0.5*Data["screen"]["size"][0]/40, flyer.position[1]-0.5*Data["screen"]["size"][1]/20), Data) #type: ignore (flyer not static) #!anti-ERROR
             explosions.extend([newExplosion])
             damageSound = pygame.mixer.Sound("assets/sounds/OOF.ogg")
             damageSound.set_volume(Data["volume"])
@@ -46,7 +48,7 @@ def damage_collisions(screen, mines, player, flyers, explosions, bullets, Data, 
         for bullet in bullets:
             if pygame.sprite.collide_rect(flyer, bullet) and not bullet.enemy:
                 flyer.features["health"] -= bullet.features["damage"]
-                newExplosion = Explosion(screen, (flyer.position[0]-0.5*Data["screen"]["size"][0]/40, flyer.position[1]-0.5*Data["screen"]["size"][1]/20), Data)
+                newExplosion = Explosion(screen, (flyer.position[0]-0.5*Data["screen"]["size"][0]/40, flyer.position[1]-0.5*Data["screen"]["size"][1]/20), Data) #type: ignore (flyer not static) #!anti-ERROR
                 explosions.extend([newExplosion])
                 explosionSound = pygame.mixer.Sound("assets/sounds/Boom.ogg")
                 explosionSound.set_volume(Data["volume"])
@@ -58,7 +60,7 @@ def damage_collisions(screen, mines, player, flyers, explosions, bullets, Data, 
     for bullet in bullets:
         if pygame.sprite.collide_rect(bullet, player) and bullet.enemy:
             player.features["health"] -= bullet.features["damage"]
-            newExplosion = Explosion(screen, (player.position[0]-0.5*Data["screen"]["size"][0]/40, player.position[1]-0.5*Data["screen"]["size"][1]/20), Data)
+            newExplosion = Explosion(screen, (player.position[0]-0.5*Data["screen"]["size"][0]/40, player.position[1]-0.5*Data["screen"]["size"][1]/20), Data) #type: ignore (player not static) #!anti-ERROR
             explosions.extend([newExplosion])
             explosionSound = pygame.mixer.Sound("assets/sounds/Boom.ogg")
             explosionSound.set_volume(Data["volume"]-1)
