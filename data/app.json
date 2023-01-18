@@ -1,1 +1,117 @@
-{"devMode": false, "volume": 0, "gravity": 0.04, "screen": {"size": [1280, 640], "caption": "CaveBlock"}, "inputs": {"left": 1073741904, "right": 1073741903, "shoot": 32, "jump": 1073741906, "crouch": 1073741905, "use": 1073742052, "igMenu": 13}, "terrainDecoder": {"0": ["WARN_2"], "1": ["CONCRETE_"], "2": ["TECH_"], "3": ["LAB_"], "P": ["plateform_"], "2a": ["FLOOR_1", "FLOOR_2A", "FLOOR_2B", "FLOOR_2D"], "2C": ["CRATE_1.1_"], "2C+": ["CRATE_1.2_"], "3a": ["FLOOR_3A", "FLOOR_3B"], "3C": ["CRATE_2.1_"], "3C+": ["CRATE_2.2_"], "*": ["CABLES_", "VINES_"], "/": ["j", "asdf45"], "//2": ["GRID_1"], "//3": ["GRID_2"], "3DD": ["DOOR_1"], "3FD": ["DOOR_2"], "2DD": ["DOOR_3"], "2FD": ["DOOR_4"], "A": ["AIR"]}, "entities": {"player": {"speed": 2, "health": 100, "damage": 5, "power": 60}, "mine": {"genMin": 1, "genMax": 15, "health": 1, "damage": 15}, "flyer": {"genMin": 1, "genMax": 10, "health": 25, "damage": 5, "speed": 3}, "explosion": {"damage": 0}, "bullet": {"damage": 10, "speed": 10}}}
+{
+  "devMode": false,
+  "volume": 0,
+  "gravity": 0.04,
+  "screen": {
+    "size": [
+      1280,
+      640
+    ],
+    "caption": "CaveBlock"
+  },
+  "inputs": {
+    "left": 1073741904,
+    "right": 1073741903,
+    "shoot": 32,
+    "jump": 1073741906,
+    "crouch": 1073741905,
+    "use": 1073742052,
+    "igMenu": 13
+  },
+  "terrainDecoder": {
+    "0": [
+      "WARN_2"
+    ],
+    "1": [
+      "CONCRETE_"
+    ],
+    "2": [
+      "TECH_"
+    ],
+    "3": [
+      "LAB_"
+    ],
+    "P": [
+      "plateform_"
+    ],
+    "2a": [
+      "FLOOR_1",
+      "FLOOR_2A",
+      "FLOOR_2B",
+      "FLOOR_2D"
+    ],
+    "2C": [
+      "CRATE_1.1_"
+    ],
+    "2C+": [
+      "CRATE_1.2_"
+    ],
+    "3a": [
+      "FLOOR_3A",
+      "FLOOR_3B"
+    ],
+    "3C": [
+      "CRATE_2.1_"
+    ],
+    "3C+": [
+      "CRATE_2.2_"
+    ],
+    "*": [
+      "CABLES_",
+      "VINES_"
+    ],
+    "/": [
+      "j",
+      "asdf45"
+    ],
+    "//2": [
+      "GRID_1"
+    ],
+    "//3": [
+      "GRID_2"
+    ],
+    "3DD": [
+      "DOOR_1"
+    ],
+    "3FD": [
+      "DOOR_2"
+    ],
+    "2DD": [
+      "DOOR_3"
+    ],
+    "2FD": [
+      "DOOR_4"
+    ],
+    "A": [
+      "AIR"
+    ]
+  },
+  "entities": {
+    "player": {
+      "speed": 2,
+      "health": 100,
+      "damage": 5,
+      "power": 60
+    },
+    "mine": {
+      "genMin": 1,
+      "genMax": 15,
+      "health": 1,
+      "damage": 15
+    },
+    "flyer": {
+      "genMin": 1,
+      "genMax": 10,
+      "health": 25,
+      "damage": 5,
+      "speed": 3
+    },
+    "explosion": {
+      "damage": 0
+    },
+    "bullet": {
+      "damage": 10,
+      "speed": 10
+    }
+  }
+}
