@@ -99,13 +99,13 @@ class Player(pygame.sprite.Sprite):
         #? why is bool here ?
         #*bool(Sprite()) will return True if the Sprite exists, we check if there is a terrain sprite that collides with the bottom checker
         self.isGrounded = bool(pygame.sprite.spritecollideany(self.checkSprites.sprites()[0], terrainCollider))
-        self.isCrouching = keys[eval("pygame.K_" + self.Data["inputs"]["crouch"])]
+        self.isCrouching = keys[self.Data["inputs"]["crouch"]]
         
         if self.isCrouching == False and self.oldIsCrouching == True and pygame.sprite.spritecollideany(self.checkSprites.sprites()[1], terrainCollider): self.isCrouching = True
         
         #~gravity
         crouchFactor = 1
-        if keys[eval("pygame.K_" + self.Data["inputs"]["crouch"])] : crouchFactor = 4
+        if keys[self.Data["inputs"]["crouch"]] : crouchFactor = 4
         if not self.isGrounded : self.direction.y += self.Data["gravity"] * crouchFactor
         
         #~toggle between crouch and normal position for the colliders
@@ -134,14 +134,14 @@ class Player(pygame.sprite.Sprite):
         self.rect = playerImage.get_rect(topleft = self.position)
         
         #~INPUTS
-        if keys[eval("pygame.K_" + self.Data["inputs"]["right"])] :
+        if keys[self.Data["inputs"]["right"]] :
             self.direction.x = 1 * self.speed
-        elif keys[eval("pygame.K_" + self.Data["inputs"]["left"])] :
+        elif keys[self.Data["inputs"]["left"]] :
             self.direction.x = -1 * self.speed
         else:
             self.direction.x = 0
         
-        if keys[eval("pygame.K_" + self.Data["inputs"]["jump"])] and self.isGrounded: #to jump the player have to be on the ground
+        if keys[self.Data["inputs"]["jump"]] and self.isGrounded: #to jump the player have to be on the ground
             self.direction.y = -4
         elif self.isCrouching:
             self.direction.x /= 2

@@ -1,5 +1,5 @@
 """
-scenes.py is the module where all the scenes like menu, Controls or the game in itself are stored
+scenes.py is the module where all the scenes like menu, Option or the game in itself are stored
 it contains classes that represent the scenes and each class has its own tick function
 """
 from run.tools import *
@@ -26,7 +26,7 @@ class Menu:
 
         #parts of tick function to avoid errors with self call
         self.ExitText = self.font.render("Exit", True, (250, 250, 250)) #set the text of the ExitButton
-        self.controlText = self.font.render("control", True, (250, 250, 250)) #set the text of the controlButton
+        self.optionsText = self.font.render("options", True, (250, 250, 250)) #set the text of the optionsButton
         self.newGameText = self.font.render("New Game", True, (250, 250, 250)) #set the text of the NewGameButton
         
         if timer != -1:
@@ -61,16 +61,16 @@ class Menu:
             self.ExitText = self.font.render("Exit", True, (200, 200, 200)) #set the text to his normal color
         screen.blit(self.ExitText, exitButtonTLCorner) #render the text
 
-        #~control button
-        controlButtonTLCorner = (Rescaler(50, 0), Rescaler(500, 1)) #set the topleft corner of the button
-        self.controlButtonSurface = self.controlText.get_rect(topleft=controlButtonTLCorner) #get the whole text surface
-        if self.controlButtonSurface.collidepoint(pygame.mouse.get_pos()[0], pygame.mouse.get_pos()[1]): #if the mouse hoover the text
-            self.controlText = self.font.render("control", True, (250, 250, 250)) #make it lighter
+        #~options button
+        optionsButtonTLCorner = (Rescaler(50, 0), Rescaler(500, 1)) #set the topleft corner of the button
+        self.optionsButtonSurface = self.optionsText.get_rect(topleft=optionsButtonTLCorner) #get the whole text surface
+        if self.optionsButtonSurface.collidepoint(pygame.mouse.get_pos()[0], pygame.mouse.get_pos()[1]): #if the mouse hoover the text
+            self.optionsText = self.font.render("Options", True, (250, 250, 250)) #make it lighter
             if testEvent([pygame.MOUSEBUTTONDOWN], events): #if the user click
-                self.next = Controls(screen, self.Data, self) #pass to control scene (state = 2 in mainloop)
+                self.next = Option(screen, self.Data, self) #pass to options scene (state = 2 in mainloop)
         else: 
-            self.controlText = self.font.render("control", True, (200, 200, 200)) #set the text to his normal color
-        screen.blit(self.controlText, controlButtonTLCorner) #render the text
+            self.optionsText = self.font.render("Options", True, (200, 200, 200)) #set the text to his normal color
+        screen.blit(self.optionsText, optionsButtonTLCorner) #render the text
 
         #~NEW GAME button
         newGameButtonTLCorner = (Rescaler(50, 0), Rescaler(400, 1)) #set the topleft corner of the button
@@ -106,7 +106,7 @@ class Game:
         """
         self.font = pygame.font.Font("assets/font.ttf", Rescaler(100)) #set the font
         self.HUDfont = pygame.font.Font("assets/HUDfont.ttf", Rescaler(75, 0)) #set the HUD font
-        self.controlText = self.font.render("control", True, (250, 250, 250)) #set the text of the controlButton
+        self.optionsText = self.font.render("options", True, (250, 250, 250)) #set the text of the optionsButton
         self.MenuText = self.font.render("Menu", True, (250, 250, 250)) #set the text of the ExitButton
         self.Data = Data.copy() #set the data
         
@@ -160,18 +160,18 @@ class Game:
         
         #if the user press the igMenu key then toggle the menu interface
         if self.player.features["health"] <= 0: self.GO = True #make the game over
-        if keys[eval("pygame.K_" + self.Data["inputs"]["igMenu"])] and self.inGameMenu and testEvent([pygame.KEYDOWN], events):
+        if keys[self.Data["inputs"]["igMenu"]] and self.inGameMenu and testEvent([pygame.KEYDOWN], events):
             pygame.mixer.music.stop()
             pygame.mixer.music.unload()
             pygame.mixer.music.load("assets/sounds/ambient.ogg")
             pygame.mixer.music.play(-1, self.timer, 500)
-        elif keys[eval("pygame.K_" + self.Data["inputs"]["igMenu"])] and testEvent([pygame.KEYDOWN], events):
+        elif keys[self.Data["inputs"]["igMenu"]] and testEvent([pygame.KEYDOWN], events):
             self.timer = pygame.mixer.music.get_pos() / 1000
             pygame.mixer.music.stop()
             pygame.mixer.music.unload()
             pygame.mixer.music.load("assets/sounds/menu.ogg")
             pygame.mixer.music.play(-1)
-        if keys[eval("pygame.K_" + self.Data["inputs"]["igMenu"])] and testEvent([pygame.KEYDOWN], events): self.inGameMenu = not self.inGameMenu
+        if keys[self.Data["inputs"]["igMenu"]] and testEvent([pygame.KEYDOWN], events): self.inGameMenu = not self.inGameMenu
         
         #if its game over then do game over outro loop
         if self.GO:
@@ -219,11 +219,11 @@ class Game:
             self.mines, self.explosions, self.player, self.bullets, self.flyers, self.playerCollisionCooldown, self.score = damage_collisions(screen, self.mines, self.player, self.flyers, self.explosions, self.bullets, self.Data, self.playerCollisionCooldown, self.score)
             
             #do use tick (take the doors) if the needed button is pressed
-            if keys[eval("pygame.K_" + self.Data["inputs"]["use"])] :
+            if keys[self.Data["inputs"]["use"]] :
                 self.next = useKeyPressed(screen, self)
             
             #same with shoot tick
-            if keys[eval("pygame.K_" + self.Data["inputs"]["shoot"])] and testEvent([pygame.KEYDOWN], events):
+            if keys[self.Data["inputs"]["shoot"]] and testEvent([pygame.KEYDOWN], events):
                 shootKeyPressed(screen, self, keys)
             
             #HUD drawing
@@ -254,16 +254,16 @@ class Game:
         menuFilter.fill((75, 75, 75))
         igMenuSurface.blit(menuFilter.convert_alpha(), (0, 0))
         
-        #~control button
-        controlButtonTLCorner = (Rescaler(50, 0), Rescaler(500, 1)) #set the topleft corner of the button
-        self.controlButtonSurface = self.controlText.get_rect(topleft=controlButtonTLCorner) #get the whole text surface
-        if self.controlButtonSurface.collidepoint(pygame.mouse.get_pos()[0], pygame.mouse.get_pos()[1]): #if the mouse hoover the text
-            self.controlText = self.font.render("control", True, (250, 250, 250)) #make it lighter
+        #~options button
+        optionsButtonTLCorner = (Rescaler(50, 0), Rescaler(500, 1)) #set the topleft corner of the button
+        self.optionsButtonSurface = self.optionsText.get_rect(topleft=optionsButtonTLCorner) #get the whole text surface
+        if self.optionsButtonSurface.collidepoint(pygame.mouse.get_pos()[0], pygame.mouse.get_pos()[1]): #if the mouse hoover the text
+            self.optionsText = self.font.render("Options", True, (250, 250, 250)) #make it lighter
             if testEvent([pygame.MOUSEBUTTONDOWN], events): #if the user click
-                self.next = Controls(screen, self.Data, self) #pass to control scene (state = 2 in mainloop)
+                self.next = Option(screen, self.Data, self) #pass to options scene (state = 2 in mainloop)
         else: 
-            self.controlText = self.font.render("control", True, (200, 200, 200)) #set the text to his normal color
-        igMenuSurface.blit(self.controlText, controlButtonTLCorner) #render the text
+            self.optionsText = self.font.render("Options", True, (200, 200, 200)) #set the text to his normal color
+        igMenuSurface.blit(self.optionsText, optionsButtonTLCorner) #render the text
         
         #~MENU button
         menuButtonTLCorner = (Rescaler(50, 0), Rescaler(600, 1)) #set the topleft corner of the button
@@ -271,7 +271,7 @@ class Game:
         if self.menuButtonSurface.collidepoint(pygame.mouse.get_pos()[0], pygame.mouse.get_pos()[1]): #if the mouse hoover the text
             self.MenuText = self.font.render("Menu", True, (250, 250, 250)) #make it lighter
             if testEvent([pygame.MOUSEBUTTONDOWN], events): #if the user click
-                self.next = Menu(screen, self.Data) #pass to control scene (state = 2 in mainloop)
+                self.next = Menu(screen, self.Data) #pass to options scene (state = 2 in mainloop)
         else: 
             self.MenuText = self.font.render("Menu", True, (200, 200, 200)) #set the text to his normal color
         igMenuSurface.blit(self.MenuText, menuButtonTLCorner) #render the text
@@ -329,7 +329,7 @@ class Game:
                 
         self.next = Menu(screen, self.Data)
 
-class Controls: #to handle the control menu display
+class Option: #to handle the options menu display
     
     def __init__(self, screen:pygame.surface.Surface, Data:dict, returnScene:Menu|Game, timer:float=0.00) -> None: #called when initializing this class
         """
@@ -343,7 +343,7 @@ class Controls: #to handle the control menu display
         Returns:
             Nothing
         """
-        self.returnScene = returnScene #save the scene to call at the end of the control scene
+        self.returnScene = returnScene #save the scene to call at the end of the options scene
         self.Data = Data.copy() #save Data
         self.next = self #set the next scene to itself
         self.font1 = pygame.font.Font("assets/font.ttf", Rescaler(125)) #set the fonts
@@ -353,10 +353,10 @@ class Controls: #to handle the control menu display
         self.returnText = self.font1.render("Return", True, (250, 250, 250)) #set the text of the ExitButton
 
     def tick(self, screen:pygame.surface.Surface, events:list[pygame.event.Event], keys:Sequence[bool]) -> None: #called every active tick
-        """do the control ticks
+        """do the options ticks
 
         Args:
-            screen (pygame.surface.Surface): where to display the Controls scene
+            screen (pygame.surface.Surface): where to display the Option scene
             events (list[pygame.event.Event]): the pygame events (user inputs)
             keys (Sequence[bool]): all the pressed keys
 
@@ -365,7 +365,7 @@ class Controls: #to handle the control menu display
         """
         self.Data = GetData("data/app.json") #actualize the data
         #~background image
-        self.bg = pygame.image.load("assets/used/bigdoor23.png").convert() #load the bg control image
+        self.bg = pygame.image.load("assets/used/bigdoor23.png").convert() #load the bg options image
         self.bg = pygame.transform.scale(self.bg, self.Data["screen"]["size"]) #rescale the image to the size of the screen
         screen.blit(self.bg, (0, 0)) #print the image on the screen
 
@@ -375,7 +375,7 @@ class Controls: #to handle the control menu display
         if self.menuButtonSurface.collidepoint(pygame.mouse.get_pos()[0], pygame.mouse.get_pos()[1]): #if the mouse hoover the text
             self.returnText = self.font1.render("Return", True, (250, 250, 250)) #make it lighter
             if testEvent([pygame.MOUSEBUTTONDOWN], events): #if the user click
-                self.returnScene.next = self.returnScene #modify the .next atribute of the return scene beccause that was the control scene
+                self.returnScene.next = self.returnScene #modify the .next atribute of the return scene beccause that was the options scene
                 self.next = self.returnScene #pass to the last scene
         else: 
             self.returnText = self.font1.render("Return", True, (200, 200, 200)) #set the text to his normal color
@@ -383,127 +383,169 @@ class Controls: #to handle the control menu display
         
         #~right button 
         #indicator
-        if keys[eval("pygame.K_" + self.Data["inputs"]["right"])]:
-            pygame.draw.rect(screen, (0, 255, 0), pygame.Rect(Rescaler(600, 0),
-                                                                        Rescaler(60, 1),
-                                                                        Rescaler(25, 0),
-                                                                        Rescaler(25, 1)),
-                                                                        border_radius=2)
+        self.rightIndicator = pygame.Rect(Rescaler(600, 0),
+                                            Rescaler(60, 1),
+                                            Rescaler(25, 0),
+                                            Rescaler(25, 1))
+        if self.rightIndicator.collidepoint(pygame.mouse.get_pos()[0], pygame.mouse.get_pos()[1]) and testEvent([pygame.MOUSEBUTTONDOWN], events):
+            newKeyChoosen = False
+            while not newKeyChoosen:
+                pygame.draw.rect(screen, (255, 128, 0), self.rightIndicator)
+                pygame.display.update(self.rightIndicator)
+                for event in pygame.event.get():
+                    if event.type == pygame.KEYDOWN:
+                        self.Data["inputs"]["right"] = event.key
+                        SetData(self.Data, "data/app.json")
+                        newKeyChoosen = True
+        elif keys[self.Data["inputs"]["right"]]:
+            pygame.draw.rect(screen, (0, 255, 0), self.rightIndicator)
         else:
-            pygame.draw.rect(screen, (255, 0, 0), pygame.Rect(Rescaler(600, 0),
-                                                                        Rescaler(60, 1),
-                                                                        Rescaler(25, 0),
-                                                                        Rescaler(25, 1)),
-                                                                        border_radius=2)
+            pygame.draw.rect(screen, (255, 0, 0), self.rightIndicator)
         #text
-        self.rightText = self.font2.render("Right (" + self.Data["inputs"]["right"] + ")", True, (225, 225, 225))
+        self.rightText = self.font2.render("Right (" + pygame.key.name(self.Data["inputs"]["right"]) + ")", True, (225, 225, 225))
         screen.blit(self.rightText, (Rescaler(630, 0), Rescaler(60, 1)))
             
             
-        #~left button
-        # indicator
-        if keys[eval("pygame.K_" + self.Data["inputs"]["left"])]:
-            pygame.draw.rect(screen, (0, 255, 0), pygame.Rect(Rescaler(600, 0),
-                                                                        Rescaler(135, 1), 
-                                                                        Rescaler(25, 0),
-                                                                        Rescaler(25, 1)),
-                                                                        border_radius=2)
+        #~left button 
+        #indicator
+        self.leftIndicator = pygame.Rect(Rescaler(600, 0),
+                                            Rescaler(135, 1),
+                                            Rescaler(25, 0),
+                                            Rescaler(25, 1))
+        if self.leftIndicator.collidepoint(pygame.mouse.get_pos()[0], pygame.mouse.get_pos()[1]) and testEvent([pygame.MOUSEBUTTONDOWN], events):
+            newKeyChoosen = False
+            while not newKeyChoosen:
+                pygame.draw.rect(screen, (255, 128, 0), self.leftIndicator)
+                pygame.display.update(self.leftIndicator)
+                for event in pygame.event.get():
+                    if event.type == pygame.KEYDOWN:
+                        self.Data["inputs"]["left"] = event.key
+                        SetData(self.Data, "data/app.json")
+                        newKeyChoosen = True
+        elif keys[self.Data["inputs"]["left"]]:
+            pygame.draw.rect(screen, (0, 255, 0), self.leftIndicator)
         else:
-            pygame.draw.rect(screen, (255, 0, 0), pygame.Rect(Rescaler(600, 0),
-                                                                        Rescaler(135, 1),
-                                                                        Rescaler(25, 0),
-                                                                        Rescaler(25, 1)),
-                                                                        border_radius=2)
+            pygame.draw.rect(screen, (255, 0, 0), self.leftIndicator)
         #text
-        self.leftText = self.font2.render("Left (" + self.Data["inputs"]["left"] + ")", True, (225, 225, 225))
+        self.leftText = self.font2.render("left (" + pygame.key.name(self.Data["inputs"]["left"]) + ")", True, (225, 225, 225))
         screen.blit(self.leftText, (Rescaler(630, 0), Rescaler(135, 1)))
             
-        #~jump button
-        # indicator
-        if keys[eval("pygame.K_" + self.Data["inputs"]["jump"])]:
-            pygame.draw.rect(screen, (0, 255, 0), pygame.Rect(Rescaler(600, 0),
-                                                                        Rescaler(210, 1),
-                                                                        Rescaler(25, 0),
-                                                                        Rescaler(25, 1)),
-                                                                        border_radius=2)
+        #~jump button 
+        #indicator
+        self.jumpIndicator = pygame.Rect(Rescaler(600, 0),
+                                            Rescaler(210, 1),
+                                            Rescaler(25, 0),
+                                            Rescaler(25, 1))
+        if self.jumpIndicator.collidepoint(pygame.mouse.get_pos()[0], pygame.mouse.get_pos()[1]) and testEvent([pygame.MOUSEBUTTONDOWN], events):
+            newKeyChoosen = False
+            while not newKeyChoosen:
+                pygame.draw.rect(screen, (255, 128, 0), self.jumpIndicator)
+                pygame.display.update(self.jumpIndicator)
+                for event in pygame.event.get():
+                    if event.type == pygame.KEYDOWN:
+                        self.Data["inputs"]["jump"] = event.key
+                        SetData(self.Data, "data/app.json")
+                        newKeyChoosen = True
+        elif keys[self.Data["inputs"]["jump"]]:
+            pygame.draw.rect(screen, (0, 255, 0), self.jumpIndicator)
         else:
-            pygame.draw.rect(screen, (255, 0, 0), pygame.Rect(Rescaler(600, 0),
-                                                                        Rescaler(210, 1),
-                                                                        Rescaler(25, 0),
-                                                                        Rescaler(25, 1)),
-                                                                        border_radius=2)
+            pygame.draw.rect(screen, (255, 0, 0), self.jumpIndicator)
         #text
-        self.jumpText = self.font2.render("Jump (" + self.Data["inputs"]["jump"] + ")", True, (225, 225, 225))
+        self.jumpText = self.font2.render("jump (" + pygame.key.name(self.Data["inputs"]["jump"]) + ")", True, (225, 225, 225))
         screen.blit(self.jumpText, (Rescaler(630, 0), Rescaler(210, 1)))            
             
-        #~crouch button
-        # indicator
-        if keys[eval("pygame.K_" + self.Data["inputs"]["crouch"])]:
-            pygame.draw.rect(screen, (0, 255, 0), pygame.Rect(Rescaler(600, 0),
-                                                                        Rescaler(285, 1),
-                                                                        Rescaler(25, 0),
-                                                                        Rescaler(25, 1)),
-                                                                        border_radius=2)
+        #~crouch button 
+        #indicator
+        self.crouchIndicator = pygame.Rect(Rescaler(600, 0),
+                                            Rescaler(285, 1),
+                                            Rescaler(25, 0),
+                                            Rescaler(25, 1))
+        if self.crouchIndicator.collidepoint(pygame.mouse.get_pos()[0], pygame.mouse.get_pos()[1]) and testEvent([pygame.MOUSEBUTTONDOWN], events):
+            newKeyChoosen = False
+            while not newKeyChoosen:
+                pygame.draw.rect(screen, (255, 128, 0), self.crouchIndicator)
+                pygame.display.update(self.crouchIndicator)
+                for event in pygame.event.get():
+                    if event.type == pygame.KEYDOWN:
+                        self.Data["inputs"]["crouch"] = event.key
+                        SetData(self.Data, "data/app.json")
+                        newKeyChoosen = True
+        elif keys[self.Data["inputs"]["crouch"]]:
+            pygame.draw.rect(screen, (0, 255, 0), self.crouchIndicator)
         else:
-            pygame.draw.rect(screen, (255, 0, 0), pygame.Rect(Rescaler(600, 0),
-                                                                        Rescaler(285, 1),
-                                                                        Rescaler(25, 0),
-                                                                        Rescaler(25, 1)),
-                                                                        border_radius=2)
+            pygame.draw.rect(screen, (255, 0, 0), self.crouchIndicator)
         #text
-        self.crouchText = self.font2.render("Crouch (" + self.Data["inputs"]["crouch"] + ")", True, (225, 225, 225))
+        self.crouchText = self.font2.render("crouch (" + pygame.key.name(self.Data["inputs"]["crouch"]) + ")", True, (225, 225, 225))
         screen.blit(self.crouchText, (Rescaler(630, 0), Rescaler(285, 1)))
         
-        #~shoot button
-        # indicator
-        if keys[eval("pygame.K_" + self.Data["inputs"]["shoot"])]:
-            pygame.draw.rect(screen, (0, 255, 0), pygame.Rect(Rescaler(600, 0),
-                                                                        Rescaler(360, 1),
-                                                                        Rescaler(25, 0),
-                                                                        Rescaler(25 ,1)),
-                                                                        border_radius=2)
+         #~shoot button 
+        #indicator
+        self.shootIndicator = pygame.Rect(Rescaler(600, 0),
+                                            Rescaler(360, 1),
+                                            Rescaler(25, 0),
+                                            Rescaler(25, 1))
+        if self.shootIndicator.collidepoint(pygame.mouse.get_pos()[0], pygame.mouse.get_pos()[1]) and testEvent([pygame.MOUSEBUTTONDOWN], events):
+            newKeyChoosen = False
+            while not newKeyChoosen:
+                pygame.draw.rect(screen, (255, 128, 0), self.shootIndicator)
+                pygame.display.update(self.shootIndicator)
+                for event in pygame.event.get():
+                    if event.type == pygame.KEYDOWN:
+                        self.Data["inputs"]["shoot"] = event.key
+                        SetData(self.Data, "data/app.json")
+                        newKeyChoosen = True
+        elif keys[self.Data["inputs"]["shoot"]]:
+            pygame.draw.rect(screen, (0, 255, 0), self.shootIndicator)
         else:
-            pygame.draw.rect(screen, (255, 0, 0), pygame.Rect(Rescaler(600, 0),
-                                                                        Rescaler(360, 1),
-                                                                        Rescaler(25, 0),
-                                                                        Rescaler(25, 1)), 
-                                                                        border_radius=2)
+            pygame.draw.rect(screen, (255, 0, 0), self.shootIndicator)
         #text
-        self.shootText = self.font2.render("Shoot (" + self.Data["inputs"]["shoot"] + ")", True, (225, 225, 225))
+        self.shootText = self.font2.render("shoot (" + pygame.key.name(self.Data["inputs"]["shoot"]) + ")", True, (225, 225, 225))
         screen.blit(self.shootText, (Rescaler(630, 0), Rescaler(360, 1)))
         
-        #~use button
-        # indicator
-        if keys[eval("pygame.K_" + self.Data["inputs"]["use"])]:
-            pygame.draw.rect(screen, (0, 255, 0), pygame.Rect(Rescaler(600, 0),
-                                                                        Rescaler(435, 1),
-                                                                        Rescaler(25, 0),
-                                                                        Rescaler(25 ,1)),
-                                                                        border_radius=2)
+        #~use button 
+        #indicator
+        self.useIndicator = pygame.Rect(Rescaler(600, 0),
+                                            Rescaler(435, 1),
+                                            Rescaler(25, 0),
+                                            Rescaler(25, 1))
+        if self.useIndicator.collidepoint(pygame.mouse.get_pos()[0], pygame.mouse.get_pos()[1]) and testEvent([pygame.MOUSEBUTTONDOWN], events):
+            newKeyChoosen = False
+            while not newKeyChoosen:
+                pygame.draw.rect(screen, (255, 128, 0), self.useIndicator)
+                pygame.display.update(self.useIndicator)
+                for event in pygame.event.get():
+                    if event.type == pygame.KEYDOWN:
+                        self.Data["inputs"]["use"] = event.key
+                        SetData(self.Data, "data/app.json")
+                        newKeyChoosen = True
+        elif keys[self.Data["inputs"]["use"]]:
+            pygame.draw.rect(screen, (0, 255, 0), self.useIndicator)
         else:
-            pygame.draw.rect(screen, (255, 0, 0), pygame.Rect(Rescaler(600, 0),
-                                                                        Rescaler(435, 1),
-                                                                        Rescaler(25, 0),
-                                                                        Rescaler(25, 1)), 
-                                                                        border_radius=2)
+            pygame.draw.rect(screen, (255, 0, 0), self.useIndicator)
         #text
-        self.useText = self.font2.render("Use (" + self.Data["inputs"]["use"] + ")", True, (225, 225, 225))
+        self.useText = self.font2.render("use (" + pygame.key.name(self.Data["inputs"]["use"]) + ")", True, (225, 225, 225))
         screen.blit(self.useText, (Rescaler(630, 0), Rescaler(435, 1)))
         
-        #~ingameMenu button
-        # indicator
-        if keys[eval("pygame.K_" + self.Data["inputs"]["igMenu"])]:
-            pygame.draw.rect(screen, (0, 255, 0), pygame.Rect(Rescaler(600, 0),
-                                                                        Rescaler(510, 1),
-                                                                        Rescaler(25, 0),
-                                                                        Rescaler(25 ,1)),
-                                                                        border_radius=2)
+        #~igMenu button 
+        #indicator
+        self.igMenuIndicator = pygame.Rect(Rescaler(600, 0),
+                                            Rescaler(510, 1),
+                                            Rescaler(25, 0),
+                                            Rescaler(25, 1))
+        if self.igMenuIndicator.collidepoint(pygame.mouse.get_pos()[0], pygame.mouse.get_pos()[1]) and testEvent([pygame.MOUSEBUTTONDOWN], events):
+            newKeyChoosen = False
+            while not newKeyChoosen:
+                pygame.draw.rect(screen, (255, 128, 0), self.igMenuIndicator)
+                pygame.display.update(self.igMenuIndicator)
+                for event in pygame.event.get():
+                    if event.type == pygame.KEYDOWN:
+                        self.Data["inputs"]["igMenu"] = event.key
+                        SetData(self.Data, "data/app.json")
+                        newKeyChoosen = True
+        elif keys[self.Data["inputs"]["igMenu"]]:
+            pygame.draw.rect(screen, (0, 255, 0), self.igMenuIndicator)
         else:
-            pygame.draw.rect(screen, (255, 0, 0), pygame.Rect(Rescaler(600, 0),
-                                                                        Rescaler(510, 1),
-                                                                        Rescaler(25, 0),
-                                                                        Rescaler(25, 1)), 
-                                                                        border_radius=2)
+            pygame.draw.rect(screen, (255, 0, 0), self.igMenuIndicator)
         #text
-        self.igText = self.font2.render("INGAME Menu (" + self.Data["inputs"]["igMenu"] + ")", True, (225, 225, 225))
-        screen.blit(self.igText, (Rescaler(630, 0), Rescaler(510, 1)))
+        self.igMenuText = self.font2.render("igMenu (" + pygame.key.name(self.Data["inputs"]["igMenu"]) + ")", True, (225, 225, 225))
+        screen.blit(self.igMenuText, (Rescaler(630, 0), Rescaler(510, 1)))

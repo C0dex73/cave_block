@@ -84,8 +84,8 @@ def useKeyPressed(screen, scene):
 def shootKeyPressed(screen, scene, keys):
     factor = 0.5
     groundedFactor = 1
-    if keys[eval("pygame.K_" + scene.Data["inputs"]["crouch"])]: groundedFactor = 0.4
-    if keys[eval("pygame.K_" + scene.Data["inputs"]["left"])] and not keys[eval("pygame.K_" + scene.Data["inputs"]["right"])]: direction = -1 ; factor = 3
+    if keys[scene.Data["inputs"]["crouch"]]: groundedFactor = 0.4
+    if keys[scene.Data["inputs"]["left"]] and not keys[eval("pygame.K_" + scene.Data["inputs"]["right"])]: direction = -1 ; factor = 3
     else: direction = 1
     position = (scene.player.rect.centerx + factor*direction*scene.player.rect.width/2, scene.player.position[1] + Rescaler(25)*groundedFactor)
     if scene.player.features["power"] > 0 :

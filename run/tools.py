@@ -33,7 +33,7 @@ def Rescaler(pos:float, axis:int=-1):
 
     Args:
         pos (float): the current position before calculating the new ones
-        axis (int, controlal): the axis of the value (default -1=take the smallest change)
+        axis (int, optionsal): the axis of the value (default -1=take the smallest change)
     Returns:
         _type_: _description_
     """
